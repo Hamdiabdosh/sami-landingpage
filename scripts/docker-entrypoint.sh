@@ -19,15 +19,18 @@ if [ -n "$DATABASE_URL" ]; then
   done
 
   echo "Running migrations..."
-  bun x prisma migrate deploy
+  npx prisma migrate deploy
 
   if [ "$RUN_SEED" = "true" ]; then
     echo "Seeding database..."
-    bun prisma/seed.ts
+    npx tsx prisma/seed.ts
   fi
 else
   echo "WARNING: DATABASE_URL not set — skipping migrations"
 fi
+
+UPLOAD_DIR="${UPLOAD_DIR:-/app/data/uploads}"
+mkdir -p "$UPLOAD_DIR"
 
 echo "Starting app on ${HOST:-0.0.0.0}:${PORT:-3000}..."
 exec "$@"

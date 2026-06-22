@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { uploadImage } from "@/lib/cloudinary";
+import { uploadImage } from "@/lib/image-storage";
 import { adminMiddleware } from "./admin-middleware";
 
 export const uploadImageFn = createServerFn({ method: "POST" })

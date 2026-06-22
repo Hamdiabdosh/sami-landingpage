@@ -1,21 +1,22 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1-debian AS build
+# ponytail: npm for install/build — bun install often flakes in Docker (tarball integrity errors)
+FROM node:22-bookworm-slim AS build
 WORKDIR /app
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
 
-COPY package.json bun.lock ./
+COPY package.json ./
 COPY prisma ./prisma
-RUN bun install --frozen-lockfile
+RUN for i in 1 2 3; do npm install --no-audit --no-fund && break || sleep 10; done
 
 COPY . .
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
-RUN bun run build
+RUN npm run build
 
-FROM oven/bun:1-debian AS production
+FROM node:22-bookworm-slim AS production
 WORKDIR /app
 
 RUN apt-get update \
@@ -26,7 +27,7 @@ ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
-COPY package.json bun.lock ./
+COPY package.json ./
 COPY prisma ./prisma
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/.output ./.output
@@ -38,4 +39,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["bun", ".output/server/index.mjs"]
+CMD ["node", ".output/server/index.mjs"]
