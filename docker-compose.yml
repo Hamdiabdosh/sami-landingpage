@@ -1,5 +1,5 @@
-# Production stack for Coolify (or: docker compose up -d)
-# Domain: https://sami.raafat.site — point Coolify at the `app` service, port 3000
+# Production stack for Coolify — deploy as "Docker Compose" (not Dockerfile-only)
+# Domain: https://sami.raafat.site → assign to the `app` service, port 3000
 
 services:
   db:
@@ -23,6 +23,8 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    expose:
+      - "3000"
     ports:
       - "${APP_PORT:-3000}:3000"
     environment:
@@ -32,7 +34,8 @@ services:
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-sami_showcase}
+      # Set DATABASE_URL explicitly in Coolify (encode special chars in password, e.g. = → %3D)
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-https://sami.raafat.site}
       BETTER_AUTH_TRUSTED_ORIGINS: ${BETTER_AUTH_TRUSTED_ORIGINS:-https://sami.raafat.site,http://sami.raafat.site}
@@ -45,12 +48,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/ >/dev/null 2>&1 || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 40s
 
 volumes:
   pgdata:
