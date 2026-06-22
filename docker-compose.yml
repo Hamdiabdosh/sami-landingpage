@@ -23,10 +23,9 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
+    # Coolify proxies to this port — do NOT bind host ports (avoids 3000 conflicts)
     expose:
       - "3000"
-    ports:
-      - "${APP_PORT:-3000}:3000"
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
