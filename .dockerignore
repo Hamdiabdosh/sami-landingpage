@@ -1,0 +1,14 @@
+node_modules
+dist
+.output
+.git
+.env
+.env.*
+!.env.example
+*.md
+prompt.md
+.cursor
+.vscode
+terminals
+docker-compose.dev.yml
+AGENTS.md

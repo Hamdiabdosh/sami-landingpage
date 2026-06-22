@@ -40,6 +40,9 @@ export const auth = betterAuth({
     enabled: true,
     disableSignUp: true,
   },
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === "production",
+  },
   plugins: [tanstackStartCookies()],
 });
 
