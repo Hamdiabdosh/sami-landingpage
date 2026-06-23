@@ -17,6 +17,7 @@ dist-ssr
 *.local
 .env
 data/uploads/
+.env.docker.local
 
 # Wrangler / Cloudflare
 .wrangler/

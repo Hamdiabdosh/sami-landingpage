@@ -5,10 +5,11 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdminSession } from "@/lib/admin-route";
 import { uploadImage, useSettings } from "@/lib/queries";
 import type { SiteSettings } from "@/lib/types";
+import { adminHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/settings")({
   beforeLoad: requireAdminSession,
-  head: () => ({ meta: [{ title: "Settings — Sami Admin" }] }),
+  head: () => adminHead("Settings"),
   component: SettingsAdmin,
 });
 

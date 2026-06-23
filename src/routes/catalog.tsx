@@ -2,11 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useMemo } from "react";
 import { z } from "zod";
-import { SiteShell } from "@/components/site/SiteShell";
 import { ProductCard } from "@/components/site/ProductCard";
+import { CatalogSkeleton } from "@/components/site/CatalogSkeleton";
 import { useI18n } from "@/lib/i18n";
 import { listProducts } from "@/fns/products";
 import type { Category } from "@/lib/types";
+import { revealTransition, spring, tapScale } from "@/lib/motion";
+import { buildSeoHead } from "@/lib/seo";
 
 const searchSchema = z.object({
   cat: z.enum(["bikes", "pumps", "scales"]).optional(),
@@ -15,14 +17,20 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/catalog")({
   validateSearch: searchSchema,
   loader: () => listProducts(),
-  head: () => ({
-    meta: [
-      { title: "Product Catalog — Sami General Trading" },
-      { name: "description", content: "Browse bicycles & spare parts, water pumps and weighing scales available at Sami General Trading, Dire Dawa." },
-    ],
-  }),
+  pendingComponent: CatalogPending,
+  head: () =>
+    buildSeoHead({
+      title: "Product Catalog",
+      description:
+        "Browse bicycles & spare parts, water pumps and weighing scales available at Sami General Trading, Dire Dawa.",
+      path: "/catalog",
+    }),
   component: Catalog,
 });
+
+function CatalogPending() {
+  return <CatalogSkeleton />;
+}
 
 function Catalog() {
   const { t } = useI18n();
@@ -42,12 +50,12 @@ function Catalog() {
   ];
 
   return (
-    <SiteShell>
+    <>
       <section className="container-x pt-14 pb-8">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={revealTransition}
         >
           <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">Catalog</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight text-balance">
@@ -73,10 +81,12 @@ function Catalog() {
                     <motion.span
                       layoutId="filter-pill"
                       className="absolute inset-0 rounded-full bg-primary"
-                      transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                      transition={spring}
                     />
                   )}
-                  <span className="relative">{f.label}</span>
+                  <motion.span className="relative" whileTap={tapScale}>
+                    {f.label}
+                  </motion.span>
                 </Link>
               );
             })}
@@ -114,6 +124,6 @@ function Catalog() {
           )}
         </AnimatePresence>
       </section>
-    </SiteShell>
+    </>
   );
 }

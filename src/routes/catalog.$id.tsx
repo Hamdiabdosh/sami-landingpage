@@ -1,10 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, MessageCircle, Send, Phone, Mail } from "lucide-react";
-import { SiteShell } from "@/components/site/SiteShell";
 import { useI18n } from "@/lib/i18n";
 import { getProductById } from "@/fns/products";
 import { getSettings } from "@/fns/settings";
+import { EASE, fadeUp, hoverLift, staggerContainer, tapScale } from "@/lib/motion";
+import { buildSeoHead, jsonLdScript, productJsonLd, truncate } from "@/lib/seo";
 
 export const Route = createFileRoute("/catalog/$id")({
   loader: async ({ params }) => {
@@ -15,14 +16,40 @@ export const Route = createFileRoute("/catalog/$id")({
     if (!product) throw notFound();
     return { product, settings };
   },
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { product } = loaderData;
+    const seo = buildSeoHead({
+      title: product.nameEn,
+      description: truncate(product.descriptionEn),
+      path: `/catalog/${product.id}`,
+      image: product.image,
+      type: "product",
+    });
+    return {
+      ...seo,
+      scripts: [jsonLdScript(productJsonLd(product))],
+    };
+  },
+  pendingComponent: () => (
+    <div className="container-x py-14">
+      <div className="h-4 w-32 rounded skeleton-shimmer bg-muted" />
+      <div className="mt-8 grid gap-10 lg:grid-cols-2">
+        <div className="aspect-square rounded-3xl skeleton-shimmer bg-muted" />
+        <div className="space-y-4">
+          <div className="h-6 w-24 rounded-full skeleton-shimmer bg-muted" />
+          <div className="h-10 w-3/4 rounded skeleton-shimmer bg-muted" />
+          <div className="h-24 w-full rounded skeleton-shimmer bg-muted" />
+        </div>
+      </div>
+    </div>
+  ),
   component: ProductDetail,
   notFoundComponent: () => (
-    <SiteShell>
-      <div className="container-x py-24 text-center">
-        <h1 className="font-display text-3xl font-bold">Product not found</h1>
-        <Link to="/catalog" className="mt-4 inline-block text-gold">← Back to catalog</Link>
-      </div>
-    </SiteShell>
+    <div className="container-x py-24 text-center">
+      <h1 className="font-display text-3xl font-bold">Product not found</h1>
+      <Link to="/catalog" className="mt-4 inline-block text-gold">← Back to catalog</Link>
+    </div>
   ),
 });
 
@@ -44,54 +71,36 @@ function ProductDetail() {
   const mailLink = `mailto:${settings.email}?subject=${encodeURIComponent("Product inquiry: " + product.nameEn)}`;
 
   return (
-    <SiteShell>
-      <section className="container-x py-10 md:py-14">
-        <Link to="/catalog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
-          <ArrowLeft size={14} /> {t("product.back")}
-        </Link>
+    <section className="container-x py-10 md:py-14">
+      <Link to="/catalog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft size={14} /> {t("product.back")}
+      </Link>
 
-        <div className="mt-8 grid gap-10 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="relative aspect-square rounded-3xl overflow-hidden bg-muted group"
-          >
-            <img
-              src={product.image}
-              alt={name}
-              className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
-            />
-          </motion.div>
+      <div className="mt-8 grid gap-10 lg:grid-cols-2">
+        <motion.div
+          layoutId={`product-image-${product.id}`}
+          transition={{ duration: 0.45, ease: EASE }}
+          className="relative aspect-square rounded-3xl overflow-hidden bg-muted group"
+        >
+          <img
+            src={product.image}
+            alt={name}
+            className="w-full h-full object-cover transition-transform duration-[1.2s] group-hover:scale-110"
+          />
+        </motion.div>
 
-          <motion.div
-            initial="hidden"
-            animate="show"
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } } }}
-          >
-            <motion.span
-              variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}
-              className="inline-block rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider"
-            >
+        <motion.div initial="hidden" animate="show" variants={staggerContainer}>
+            <motion.span variants={fadeUp} className="inline-block rounded-full bg-secondary px-3 py-1 text-[11px] font-semibold uppercase tracking-wider">
               {product.subtype}
             </motion.span>
-            <motion.h1
-              variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
-              className="mt-4 font-display text-3xl md:text-4xl font-bold tracking-tight text-balance"
-            >
+            <motion.h1 variants={fadeUp} className="mt-4 font-display text-3xl md:text-4xl font-bold tracking-tight text-balance">
               {name}
             </motion.h1>
-            <motion.p
-              variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
-              className="mt-4 text-muted-foreground leading-relaxed"
-            >
+            <motion.p variants={fadeUp} className="mt-4 text-muted-foreground leading-relaxed">
               {desc}
             </motion.p>
 
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
-              className="mt-8"
-            >
+            <motion.div variants={fadeUp} className="mt-8">
               <h2 className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">{t("product.specs")}</h2>
               <div className="mt-4 rounded-2xl border border-border overflow-hidden">
                 <table className="w-full text-sm">
@@ -107,32 +116,30 @@ function ProductDetail() {
               </div>
             </motion.div>
 
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
-              className="mt-8 flex flex-col sm:flex-row gap-3"
-            >
-              <a
+            <motion.div variants={fadeUp} className="mt-8 flex flex-col sm:flex-row gap-3">
+              <motion.a
+                whileHover={hoverLift}
+                whileTap={tapScale}
                 href={waLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-4 font-semibold text-white hover:brightness-105 transition-all"
               >
                 <MessageCircle size={18} /> {t("product.inquire.wa")}
-              </a>
-              <a
+              </motion.a>
+              <motion.a
+                whileHover={hoverLift}
+                whileTap={tapScale}
                 href={tgLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-[#229ED9] px-5 py-4 font-semibold text-white hover:brightness-105 transition-all"
               >
                 <Send size={18} /> {t("product.inquire.tg")}
-              </a>
+              </motion.a>
             </motion.div>
 
-            <motion.div
-              variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0 } }}
-              className="mt-4 flex flex-wrap gap-4 text-sm"
-            >
+            <motion.div variants={fadeUp} className="mt-4 flex flex-wrap gap-4 text-sm">
               <a href={telLink} className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground">
                 <Phone size={14} /> {t("product.call")}: {settings.phone}
               </a>
@@ -143,6 +150,5 @@ function ProductDetail() {
           </motion.div>
         </div>
       </section>
-    </SiteShell>
   );
 }

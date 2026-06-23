@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
+import { EASE } from "@/lib/motion";
 
 const CATEGORY_LABEL: Record<Product["category"], { en: string; am: string }> = {
   bikes: { en: "Bicycles & Parts", am: "ብስክሌት" },
@@ -21,14 +22,18 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -16 }}
-      transition={{ duration: 0.4, delay: Math.min(index, 8) * 0.04, ease: "easeOut" }}
+      transition={{ duration: 0.4, delay: Math.min(index, 8) * 0.04, ease: EASE }}
+      whileHover={{ y: -4 }}
     >
       <Link
         to="/catalog/$id"
         params={{ id: product.id }}
         className="group block rounded-2xl bg-card border border-border overflow-hidden hover:border-gold/60 hover:shadow-[0_20px_60px_-25px_rgba(8,20,40,0.35)] transition-all duration-300"
       >
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+        <motion.div
+          layoutId={`product-image-${product.id}`}
+          className="relative aspect-[4/3] overflow-hidden bg-muted"
+        >
           <img
             src={product.image}
             alt={name}
@@ -41,7 +46,7 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           <span className="absolute top-3 right-3 inline-flex items-center justify-center h-9 w-9 rounded-full bg-foreground text-background opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
             <ArrowUpRight size={16} />
           </span>
-        </div>
+        </motion.div>
         <div className="p-5">
           <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{product.subtype}</p>
           <h3 className="mt-1.5 font-display text-lg font-semibold leading-snug group-hover:text-primary transition-colors">

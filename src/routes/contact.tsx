@@ -1,18 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Phone, MessageCircle, Send, Mail, MapPin } from "lucide-react";
-import { SiteShell } from "@/components/site/SiteShell";
 import { useI18n } from "@/lib/i18n";
 import { getSettings } from "@/fns/settings";
+import { hoverLift, revealTransition, tapScale } from "@/lib/motion";
+import { buildSeoHead, jsonLdScript, localBusinessJsonLd } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   loader: () => getSettings(),
-  head: () => ({
-    meta: [
-      { title: "Contact — Sami General Trading" },
-      { name: "description", content: "Call, WhatsApp, Telegram or email Sami General Trading in Dire Dawa, Ethiopia." },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    const seo = buildSeoHead({
+      title: "Contact",
+      description: "Call, WhatsApp, Telegram or email Sami General Trading in Dire Dawa, Ethiopia.",
+      path: "/contact",
+    });
+    const scripts = loaderData ? [jsonLdScript(localBusinessJsonLd(loaderData))] : [];
+    return { ...seo, scripts };
+  },
   component: Contact,
 });
 
@@ -28,9 +32,9 @@ function Contact() {
   ];
 
   return (
-    <SiteShell>
+    <>
       <section className="container-x pt-14">
-        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
           <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">Contact</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight text-balance">{t("contact.title")}</h1>
           <p className="mt-3 text-muted-foreground max-w-xl">{t("contact.sub")}</p>
@@ -47,8 +51,9 @@ function Contact() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.45, delay: i * 0.06 }}
-            whileHover={{ y: -3 }}
+            transition={{ ...revealTransition, delay: i * 0.06 }}
+            whileHover={hoverLift}
+            whileTap={tapScale}
             className={`group flex items-center gap-5 rounded-2xl p-6 ${a.bg} transition-shadow hover:shadow-2xl`}
           >
             <span className="grid h-14 w-14 place-items-center rounded-xl bg-white/15 backdrop-blur">
@@ -67,7 +72,7 @@ function Contact() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={revealTransition}
           className="rounded-3xl overflow-hidden border border-border bg-card"
         >
           <div className="aspect-[16/9] w-full bg-muted">
@@ -90,6 +95,6 @@ function Contact() {
           </div>
         </motion.div>
       </section>
-    </SiteShell>
+    </>
   );
 }

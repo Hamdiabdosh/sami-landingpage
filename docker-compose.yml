@@ -42,6 +42,7 @@ services:
       # DATABASE_URL built at startup from POSTGRES_* (see scripts/docker-entrypoint.sh)
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-https://sami.raafat.site}
+      SITE_URL: ${SITE_URL:-${BETTER_AUTH_URL:-https://sami.raafat.site}}
       BETTER_AUTH_TRUSTED_ORIGINS: ${BETTER_AUTH_TRUSTED_ORIGINS:-https://sami.raafat.site,http://sami.raafat.site}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@sami.et}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-sami2026}

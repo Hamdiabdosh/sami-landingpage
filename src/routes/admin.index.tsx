@@ -3,10 +3,11 @@ import { Package, Image as ImgIcon, Settings as SettingsIcon, ArrowRight } from 
 import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdminSession } from "@/lib/admin-route";
 import { useProducts, useGallery } from "@/lib/queries";
+import { adminHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/")({
   beforeLoad: requireAdminSession,
-  head: () => ({ meta: [{ title: "Dashboard — Sami Admin" }] }),
+  head: () => adminHead("Dashboard"),
   component: Dashboard,
 });
 

@@ -1,14 +1,21 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValueEvent, useScroll } from "framer-motion";
 import { Logo } from "./Logo";
 import { useI18n, type Lang } from "@/lib/i18n";
+import { EASE, spring, tapScale } from "@/lib/motion";
 
 export function Header() {
   const { t, lang, setLang } = useI18n();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { scrollYProgress } = useScroll();
+
+  useMotionValueEvent(scrollYProgress, "change", () => {
+    setScrolled(window.scrollY > 48);
+  });
 
   const links = [
     { to: "/", label: t("nav.home") },
@@ -22,12 +29,23 @@ export function Header() {
     <motion.header
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-50 backdrop-blur-md bg-background/85 border-b border-border"
+      transition={{ duration: 0.5, ease: EASE }}
+      className={`sticky top-0 z-50 border-b border-border transition-[background,box-shadow,backdrop-filter] duration-300 ${
+        scrolled ? "bg-background/95 shadow-sm backdrop-blur-lg" : "bg-background/85 backdrop-blur-md"
+      }`}
     >
-      <div className="container-x flex items-center justify-between h-16">
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left bg-gold"
+        style={{ scaleX: scrollYProgress }}
+      />
+
+      <motion.div
+        animate={{ height: scrolled ? 56 : 64 }}
+        transition={{ duration: 0.25, ease: EASE }}
+        className="container-x flex items-center justify-between"
+      >
         <Link to="/" className="flex items-center" onClick={() => setOpen(false)}>
-          <Logo size={36} />
+          <Logo size={scrolled ? 32 : 36} />
         </Link>
 
         <nav className="hidden md:flex items-center gap-7">
@@ -47,6 +65,7 @@ export function Header() {
                   <motion.span
                     layoutId="nav-underline"
                     className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-gold rounded-full"
+                    transition={spring}
                   />
                 )}
               </Link>
@@ -56,15 +75,16 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <LangToggle value={lang} onChange={setLang} />
-          <button
+          <motion.button
+            whileTap={tapScale}
             className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border"
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
             {open ? <X size={18} /> : <Menu size={18} />}
-          </button>
+          </motion.button>
         </div>
-      </div>
+      </motion.div>
 
       <AnimatePresence>
         {open && (
@@ -72,7 +92,7 @@ export function Header() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.25, ease: EASE }}
             className="md:hidden border-t border-border overflow-hidden"
           >
             <div className="container-x py-3 flex flex-col">
@@ -98,8 +118,9 @@ function LangToggle({ value, onChange }: { value: Lang; onChange: (l: Lang) => v
   return (
     <div className="relative inline-flex rounded-full border border-border bg-card p-1 text-xs font-semibold">
       {(["en", "am"] as const).map((l) => (
-        <button
+        <motion.button
           key={l}
+          whileTap={tapScale}
           onClick={() => onChange(l)}
           className={`relative z-10 px-3 py-1.5 rounded-full transition-colors ${
             value === l ? "text-primary-foreground" : "text-muted-foreground"
@@ -109,11 +130,11 @@ function LangToggle({ value, onChange }: { value: Lang; onChange: (l: Lang) => v
             <motion.span
               layoutId="lang-pill"
               className="absolute inset-0 rounded-full bg-primary"
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              transition={spring}
             />
           )}
           <span className="relative">{l.toUpperCase()}</span>
-        </button>
+        </motion.button>
       ))}
     </div>
   );

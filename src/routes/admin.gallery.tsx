@@ -4,10 +4,11 @@ import { ArrowUp, ArrowDown, Trash2, Upload, Plus } from "lucide-react";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdminSession } from "@/lib/admin-route";
 import { uploadImage, useGallery } from "@/lib/queries";
+import { adminHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/gallery")({
   beforeLoad: requireAdminSession,
-  head: () => ({ meta: [{ title: "Gallery — Sami Admin" }] }),
+  head: () => adminHead("Gallery"),
   component: GalleryAdmin,
 });
 

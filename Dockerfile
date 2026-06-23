@@ -37,7 +37,9 @@ ENV PORT=3000
 
 COPY package.json ./
 COPY prisma ./prisma
-COPY --from=build /app/node_modules ./node_modules
+# ponytail: minimal runtime deps only — copying full node_modules (~500MB) OOMs small VPS at image export
+RUN npm install --no-audit --no-fund prisma@6 tsx @prisma/client \
+  && npx prisma generate
 COPY --from=build /app/.output ./.output
 COPY scripts/docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

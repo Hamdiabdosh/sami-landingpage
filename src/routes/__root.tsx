@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -11,6 +12,19 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "../lib/i18n";
+import { SiteShell } from "@/components/site/SiteShell";
+import { buildSeoHead, jsonLdScript, webSiteJsonLd } from "@/lib/seo";
+
+function usePublicSite() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  return (
+    !pathname.startsWith("/admin") &&
+    !pathname.startsWith("/api") &&
+    !pathname.startsWith("/uploads") &&
+    pathname !== "/robots.txt" &&
+    pathname !== "/sitemap.xml"
+  );
+}
 
 function NotFoundComponent() {
   return (
@@ -71,27 +85,29 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Sami General Trading — Bicycles, Pumps & Scales · Dire Dawa" },
-      {
-        name: "description",
-        content:
-          "Sami General Trading supplies bicycles & spare parts, water pumps, and weighing scales in Dire Dawa, Ethiopia. Trusted, durable, contact for pricing.",
-      },
-      { name: "author", content: "Sami General Trading" },
-      { property: "og:title", content: "Sami General Trading — Dire Dawa" },
-      { property: "og:description", content: "Bicycles, water pumps & weighing scales in Dire Dawa, Ethiopia." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.png", type: "image/png" },
-    ],
-  }),
+  head: () => {
+    const seo = buildSeoHead({
+      title: "Bicycles, Pumps & Scales · Dire Dawa",
+      path: "/",
+    });
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "theme-color", content: "#0f1a2e" },
+        { name: "author", content: "Sami General Trading" },
+        { name: "geo.region", content: "ET-DD" },
+        { name: "geo.placename", content: "Dire Dawa" },
+        ...seo.meta,
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", href: "/favicon.png", type: "image/png" },
+        ...seo.links,
+      ],
+      scripts: [jsonLdScript(webSiteJsonLd())],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -114,10 +130,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const publicSite = usePublicSite();
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        <Outlet />
+        {publicSite ? (
+          <SiteShell>
+            <Outlet />
+          </SiteShell>
+        ) : (
+          <Outlet />
+        )}
       </I18nProvider>
     </QueryClientProvider>
   );

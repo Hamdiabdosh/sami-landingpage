@@ -13,4 +13,7 @@ prompt.md
 .vscode
 terminals
 docker-compose.dev.yml
+docker-compose.local.yml
+.env.docker.local
+data/
 AGENTS.md

@@ -6,10 +6,11 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdminSession } from "@/lib/admin-route";
 import { uploadImage, useProducts } from "@/lib/queries";
 import type { Product, Category, Spec } from "@/lib/types";
+import { adminHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/products")({
   beforeLoad: requireAdminSession,
-  head: () => ({ meta: [{ title: "Products — Sami Admin" }] }),
+  head: () => adminHead("Products"),
   component: ProductsAdmin,
 });
 

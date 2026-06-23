@@ -1,0 +1,8 @@
+# Local override — exposes app on host port 3080 (Coolify compose has no host ports)
+services:
+  app:
+    ports:
+      - "3080:3000"
+    environment:
+      BETTER_AUTH_URL: http://localhost:3080
+      BETTER_AUTH_TRUSTED_ORIGINS: http://localhost:3080

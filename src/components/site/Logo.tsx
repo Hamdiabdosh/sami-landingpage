@@ -14,7 +14,7 @@ export function Logo({ size = 36, showWordmark = true, tone = "dark" }: Props) {
         alt="Sami General Trading logo"
         width={size}
         height={size}
-        className="rounded-md"
+        className="rounded-md transition-[width,height] duration-300 ease-out"
         style={{ width: size, height: size }}
       />
       {showWordmark && (

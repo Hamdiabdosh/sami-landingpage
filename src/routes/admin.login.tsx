@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Logo } from "@/components/site/Logo";
+import { adminHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/login")({
-  head: () => ({ meta: [{ title: "Admin Login — Sami General Trading" }] }),
+  head: () => adminHead("Admin Login"),
   component: AdminLogin,
 });
 

@@ -2,20 +2,27 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { SiteShell } from "@/components/site/SiteShell";
+import { GallerySkeleton } from "@/components/site/GallerySkeleton";
 import { useI18n } from "@/lib/i18n";
 import { listGalleryImages } from "@/fns/gallery";
+import { revealTransition } from "@/lib/motion";
+import { buildSeoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/gallery")({
   loader: () => listGalleryImages(),
-  head: () => ({
-    meta: [
-      { title: "Gallery — Sami General Trading" },
-      { name: "description", content: "Photos from our shop and the goods we move in Dire Dawa." },
-    ],
-  }),
+  pendingComponent: GalleryPending,
+  head: () =>
+    buildSeoHead({
+      title: "Gallery",
+      description: "Photos from our shop and the goods we move in Dire Dawa.",
+      path: "/gallery",
+    }),
   component: GalleryPage,
 });
+
+function GalleryPending() {
+  return <GallerySkeleton />;
+}
 
 function GalleryPage() {
   const { t, lang } = useI18n();
@@ -34,9 +41,9 @@ function GalleryPage() {
   }, [openIdx, items.length]);
 
   return (
-    <SiteShell>
+    <>
       <section className="container-x pt-14">
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
           <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">Gallery</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight text-balance">{t("gallery.title")}</h1>
           <p className="mt-3 text-muted-foreground max-w-xl">{t("gallery.sub")}</p>
@@ -54,7 +61,7 @@ function GalleryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.5, delay: (i % 6) * 0.05 }}
+                transition={{ ...revealTransition, delay: (i % 6) * 0.05 }}
                 className="group relative mb-5 block w-full overflow-hidden rounded-2xl bg-muted break-inside-avoid"
               >
                 <img src={img.src} alt={cap} loading="lazy" className="w-full transition-transform duration-700 group-hover:scale-105" />
@@ -111,6 +118,6 @@ function GalleryPage() {
           </motion.div>
         )}
       </AnimatePresence>
-    </SiteShell>
+    </>
   );
 }
