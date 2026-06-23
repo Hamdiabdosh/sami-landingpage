@@ -26,6 +26,10 @@ services:
     # Coolify proxies to this port — do NOT bind host ports (avoids 3000 conflicts)
     expose:
       - "3000"
+    labels:
+      # ponytail: explicit port — fixes Coolify/Traefik 404 when proxy can't auto-detect port
+      - traefik.http.services.app.loadbalancer.server.port=3000
+      - caddy_0.handle_path.0_reverse_proxy={{upstreams 3000}}
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
