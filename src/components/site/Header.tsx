@@ -45,7 +45,7 @@ export function Header() {
         className="container-x flex items-center justify-between"
       >
         <Link to="/" className="flex items-center" onClick={() => setOpen(false)}>
-          <Logo size={scrolled ? 32 : 36} />
+          <Logo size={scrolled ? 36 : 40} />
         </Link>
 
         <nav className="hidden md:flex items-center gap-7">

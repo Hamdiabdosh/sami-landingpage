@@ -180,7 +180,7 @@ function ProductDialog({ initial, onSave, onClose, saving }: { initial: Product;
             <Field label="Name (English)">
               <input required value={p.nameEn} onChange={(e) => setP({ ...p, nameEn: e.target.value })} className={inputCls} />
             </Field>
-            <Field label="Name (Amharic)">
+            <Field label="Name (Amharic, optional)">
               <input value={p.nameAm} onChange={(e) => setP({ ...p, nameAm: e.target.value })} className={inputCls} />
             </Field>
             <Field label="Category">

@@ -57,12 +57,12 @@ function ProductDetail() {
   const { product, settings } = Route.useLoaderData();
   const { t, lang } = useI18n();
 
-  const name = lang === "en" ? product.nameEn : product.nameAm;
+  const name = lang === "en" ? product.nameEn : product.nameAm || product.nameEn;
   const desc = lang === "en" ? product.descriptionEn : product.descriptionAm;
 
   const inquiryText = encodeURIComponent(
     lang === "am"
-      ? `ሰላም ሳሚ ጄኔራል ትሬዲንግ፣ ስለ ${product.nameAm} መረጃ እፈልጋለሁ።`
+      ? `ሰላም ሳሚ ጄኔራል ትሬዲንግ፣ ስለ ${product.nameAm || product.nameEn} መረጃ እፈልጋለሁ።`
       : `Hello Sami General Trading, I'd like to inquire about: ${product.nameEn}`,
   );
   const waLink = `https://wa.me/251${settings.whatsapp.replace(/^0/, "")}?text=${inquiryText}`;

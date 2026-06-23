@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Lock, Eye, EyeOff } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Logo } from "@/components/site/Logo";
 import { adminHead } from "@/lib/seo";
@@ -16,6 +16,7 @@ function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +43,7 @@ function AdminLogin() {
         className="w-full max-w-md rounded-3xl bg-card text-card-foreground p-8 shadow-2xl"
       >
         <div className="flex items-center justify-between">
-          <Logo size={36} />
+          <Logo size={44} />
           <Link to="/" className="text-xs text-muted-foreground hover:text-foreground">← Site</Link>
         </div>
 
@@ -68,13 +69,23 @@ function AdminLogin() {
           </div>
           <div>
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Password</label>
-            <input
-              value={pass}
-              onChange={(e) => setPass(e.target.value)}
-              type="password"
-              required
-              className="mt-1.5 w-full rounded-xl border border-border bg-background px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-gold"
-            />
+            <div className="relative mt-1.5">
+              <input
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                type={showPass ? "text" : "password"}
+                required
+                className="w-full rounded-xl border border-border bg-background px-4 py-3 pr-12 text-base focus:outline-none focus:ring-2 focus:ring-gold"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass((v) => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPass ? "Hide password" : "Show password"}
+              >
+                {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           {err && <p className="text-sm text-destructive">{err}</p>}
           <button

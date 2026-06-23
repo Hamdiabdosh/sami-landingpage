@@ -11,7 +11,7 @@ const specSchema = z.object({ label: z.string(), value: z.string() });
 const productInput = z.object({
   id: z.string().uuid().optional().or(z.literal("")),
   nameEn: z.string().min(1),
-  nameAm: z.string().min(1),
+  nameAm: z.string().default(""),
   category: z.enum(["bikes", "pumps", "scales"]),
   subtype: z.string().optional(),
   descriptionEn: z.string().min(1),
@@ -23,8 +23,8 @@ const productInput = z.object({
 
 function validateActive(input: z.infer<typeof productInput>) {
   if (!input.active) return;
-  if (!input.nameEn || !input.nameAm || !input.descriptionEn || !input.descriptionAm) {
-    throw new Error("All EN/AM name and description fields are required to publish.");
+  if (!input.nameEn || !input.descriptionEn || !input.descriptionAm) {
+    throw new Error("English name and EN/AM descriptions are required to publish.");
   }
   if (!input.image) throw new Error("Image is required before marking a product active.");
 }

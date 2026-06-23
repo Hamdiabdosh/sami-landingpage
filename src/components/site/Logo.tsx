@@ -6,16 +6,15 @@ interface Props {
   tone?: "light" | "dark";
 }
 
-export function Logo({ size = 36, showWordmark = true, tone = "dark" }: Props) {
+export function Logo({ size = 36, showWordmark = false, tone = "dark" }: Props) {
   return (
     <div className="flex items-center gap-2.5">
       <img
         src={logo}
         alt="Sami General Trading logo"
-        width={size}
         height={size}
-        className="rounded-md transition-[width,height] duration-300 ease-out"
-        style={{ width: size, height: size }}
+        className="w-auto rounded-md object-contain transition-[max-height] duration-300 ease-out"
+        style={{ maxHeight: size }}
       />
       {showWordmark && (
         <div className="flex flex-col leading-none">

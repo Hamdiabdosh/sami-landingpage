@@ -13,7 +13,7 @@ const CATEGORY_LABEL: Record<Product["category"], { en: string; am: string }> = 
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { lang } = useI18n();
-  const name = lang === "en" ? product.nameEn : product.nameAm;
+  const name = lang === "en" ? product.nameEn : product.nameAm || product.nameEn;
   const catLabel = CATEGORY_LABEL[product.category][lang];
 
   return (
