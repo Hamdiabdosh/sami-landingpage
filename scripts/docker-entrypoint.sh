@@ -4,6 +4,20 @@ set -e
 POSTGRES_HOST="${POSTGRES_HOST:-db}"
 POSTGRES_PORT="${POSTGRES_PORT:-5432}"
 POSTGRES_USER="${POSTGRES_USER:-postgres}"
+POSTGRES_DB="${POSTGRES_DB:-sami_showcase}"
+
+# ponytail: POSTGRES_PASSWORD is the single source of truth — avoids DATABASE_URL / volume password drift
+if [ -n "$POSTGRES_PASSWORD" ]; then
+  DATABASE_URL="$(node -e "
+    const u = process.env.POSTGRES_USER || 'postgres';
+    const p = process.env.POSTGRES_PASSWORD || '';
+    const d = process.env.POSTGRES_DB || 'sami_showcase';
+    const h = process.env.POSTGRES_HOST || 'db';
+    const port = process.env.POSTGRES_PORT || '5432';
+    console.log('postgresql://' + encodeURIComponent(u) + ':' + encodeURIComponent(p) + '@' + h + ':' + port + '/' + d);
+  ")"
+  export DATABASE_URL
+fi
 
 if [ -n "$DATABASE_URL" ]; then
   echo "Waiting for Postgres at ${POSTGRES_HOST}:${POSTGRES_PORT}..."

@@ -33,8 +33,9 @@ services:
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      # Set DATABASE_URL explicitly in Coolify (encode special chars in password, e.g. = → %3D)
-      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-sami_showcase}
+      # DATABASE_URL built at startup from POSTGRES_* (see scripts/docker-entrypoint.sh)
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-https://sami.raafat.site}
       BETTER_AUTH_TRUSTED_ORIGINS: ${BETTER_AUTH_TRUSTED_ORIGINS:-https://sami.raafat.site,http://sami.raafat.site}

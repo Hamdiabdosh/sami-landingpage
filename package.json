@@ -17,6 +17,7 @@
     "db:push": "prisma db push",
     "db:seed": "bun prisma/seed.ts",
     "db:setup": "prisma migrate deploy && bun prisma/seed.ts",
+    "docker:reset-db": "bash scripts/docker-db-reset.sh",
     "postinstall": "prisma generate"
   },
   "prisma": {
