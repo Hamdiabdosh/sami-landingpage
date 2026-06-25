@@ -58,7 +58,7 @@ function ProductDetail() {
   const { t, lang } = useI18n();
 
   const name = lang === "en" ? product.nameEn : product.nameAm || product.nameEn;
-  const desc = lang === "en" ? product.descriptionEn : product.descriptionAm;
+  const desc = lang === "en" ? product.descriptionEn : product.descriptionAm || product.descriptionEn;
 
   const inquiryText = encodeURIComponent(
     lang === "am"

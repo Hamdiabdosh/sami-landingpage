@@ -7,11 +7,12 @@ import { CatalogSkeleton } from "@/components/site/CatalogSkeleton";
 import { useI18n } from "@/lib/i18n";
 import { listProducts } from "@/fns/products";
 import type { Category } from "@/lib/types";
+import { CATEGORIES } from "@/lib/categories";
 import { revealTransition, spring, tapScale } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 
 const searchSchema = z.object({
-  cat: z.enum(["bikes", "pumps", "scales"]).optional(),
+  cat: z.enum(["bikes", "pumps", "scales", "other"]).optional(),
 });
 
 export const Route = createFileRoute("/catalog")({
@@ -44,9 +45,7 @@ function Catalog() {
 
   const filters: { id: Category | "all"; label: string }[] = [
     { id: "all", label: t("cat.all") },
-    { id: "bikes", label: t("cat.bikes") },
-    { id: "pumps", label: t("cat.pumps") },
-    { id: "scales", label: t("cat.scales") },
+    ...CATEGORIES.map((id) => ({ id, label: t(`cat.${id}` as "cat.bikes") })),
   ];
 
   return (

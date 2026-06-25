@@ -50,6 +50,7 @@ export function toSiteSettings(row: DbSettings): SiteSettings {
     telegram: row.telegramHandle,
     email: row.email,
     mapUrl: row.mapUrl,
+    mapEmbedUrl: row.mapEmbedUrl ?? "",
     address: row.address,
     logo: row.logoUrl ?? defaultLogo,
   };

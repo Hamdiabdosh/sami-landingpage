@@ -19,10 +19,11 @@ const dict: Dict = {
     am: "ብስክሌቶችና መለዋወጫዎች፣ የውሃ ፓምፖች እና ሚዛኖች — በሳሚ ጄኔራል ትሬዲንግ የሚቀርቡ።",
   },
   "cats.title": { en: "What we trade", am: "የምንሸጠው" },
-  "cats.sub": { en: "Three categories. Built for daily use.", am: "ሶስት ምድቦች። ለዕለታዊ አጠቃቀም።" },
+  "cats.sub": { en: "Four categories. Built for daily use.", am: "አራት ምድቦች። ለዕለታዊ አጠቃቀም።" },
   "cat.bikes": { en: "Bicycles & Spare Parts", am: "ብስክሌቶችና መለዋወጫዎች" },
   "cat.pumps": { en: "Water Pumps", am: "የውሃ ፓምፖች" },
   "cat.scales": { en: "Scales", am: "ሚዛኖች" },
+  "cat.other": { en: "Other", am: "ሌላ" },
   "cat.all": { en: "All", am: "ሁሉም" },
   "catalog.title": { en: "Product Catalog", am: "የምርት ካታሎግ" },
   "catalog.sub": { en: "Filter by category. Inquire for pricing.", am: "በምድብ ያጣሩ። ለዋጋ ይጠይቁ።" },
@@ -40,7 +41,8 @@ const dict: Dict = {
   "contact.sub": { en: "Reach us directly. We respond fast.", am: "በቀጥታ ያግኙን። በፍጥነት እንመልሳለን።" },
   "contact.address": { en: "Address", am: "አድራሻ" },
   "footer.rights": { en: "All rights reserved.", am: "ሁሉም መብቶች የተጠበቁ ናቸው።" },
-  "footer.tagline": { en: "Bicycles · Pumps · Scales", am: "ብስክሌት · ፓምፕ · ሚዛን" },
+  "footer.tagline": { en: "Bicycles · Water Pumps · Scales", am: "ብስክሌት · የውሃ ፓምፕ · ሚዛን" },
+  "contact.directions": { en: "Get directions", am: "አቅጣጫ ያግኙ" },
 };
 
 interface I18nCtx {

@@ -6,6 +6,9 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdminSession } from "@/lib/admin-route";
 import { uploadImage, useProducts } from "@/lib/queries";
 import type { Product, Category, Spec } from "@/lib/types";
+import { CATEGORY_LABEL } from "@/lib/categories";
+import { formatServerError } from "@/lib/format-error";
+import { toast } from "sonner";
 import { adminHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/admin/products")({
@@ -14,7 +17,12 @@ export const Route = createFileRoute("/admin/products")({
   component: ProductsAdmin,
 });
 
-const CAT_LABEL: Record<Category, string> = { bikes: "Bicycles & Parts", pumps: "Water Pumps", scales: "Scales" };
+const CAT_LABEL: Record<Category, string> = {
+  bikes: CATEGORY_LABEL.bikes.en,
+  pumps: CATEGORY_LABEL.pumps.en,
+  scales: CATEGORY_LABEL.scales.en,
+  other: CATEGORY_LABEL.other.en,
+};
 
 const emptyProduct = (): Product => ({
   id: "",
@@ -115,7 +123,7 @@ function ProductsAdmin() {
                 await upsert(p);
                 setEditing(null);
               } catch (e) {
-                alert(e instanceof Error ? e.message : "Failed to save product");
+                toast.error(formatServerError(e));
               } finally {
                 setSaving(false);
               }
@@ -140,7 +148,7 @@ function ProductDialog({ initial, onSave, onClose, saving }: { initial: Product;
         const url = await uploadImage(String(reader.result));
         setP((prev) => ({ ...prev, image: url }));
       } catch (e) {
-        alert(e instanceof Error ? e.message : "Upload failed");
+        toast.error(formatServerError(e));
       } finally {
         setUploading(false);
       }
@@ -188,9 +196,10 @@ function ProductDialog({ initial, onSave, onClose, saving }: { initial: Product;
                 <option value="bikes">Bicycles & Parts</option>
                 <option value="pumps">Water Pumps</option>
                 <option value="scales">Scales</option>
+                <option value="other">Other</option>
               </select>
             </Field>
-            <Field label="Subtype">
+            <Field label={p.category === "other" ? "Type / subtype (required for Other)" : "Subtype"}>
               <input value={p.subtype} onChange={(e) => setP({ ...p, subtype: e.target.value })} placeholder="e.g. Mountain bike" className={inputCls} />
             </Field>
           </div>
@@ -198,7 +207,7 @@ function ProductDialog({ initial, onSave, onClose, saving }: { initial: Product;
           <Field label="Description (English)">
             <textarea value={p.descriptionEn} onChange={(e) => setP({ ...p, descriptionEn: e.target.value })} rows={3} className={inputCls} />
           </Field>
-          <Field label="Description (Amharic)">
+          <Field label="Description (Amharic, optional)">
             <textarea value={p.descriptionAm} onChange={(e) => setP({ ...p, descriptionAm: e.target.value })} rows={3} className={inputCls} />
           </Field>
 

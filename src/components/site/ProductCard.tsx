@@ -4,17 +4,12 @@ import { ArrowUpRight } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
 import { EASE } from "@/lib/motion";
-
-const CATEGORY_LABEL: Record<Product["category"], { en: string; am: string }> = {
-  bikes: { en: "Bicycles & Parts", am: "ብስክሌት" },
-  pumps: { en: "Water Pump", am: "ፓምፕ" },
-  scales: { en: "Scale", am: "ሚዛን" },
-};
+import { productCategoryBadge } from "@/lib/categories";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
   const { lang } = useI18n();
   const name = lang === "en" ? product.nameEn : product.nameAm || product.nameEn;
-  const catLabel = CATEGORY_LABEL[product.category][lang];
+  const catLabel = productCategoryBadge(product, lang);
 
   return (
     <motion.div

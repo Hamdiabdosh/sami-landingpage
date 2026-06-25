@@ -5,12 +5,14 @@ const TO_DB: Record<UiCategory, DbCategory> = {
   bikes: "BICYCLES_PARTS",
   pumps: "WATER_PUMPS",
   scales: "SCALES",
+  other: "OTHER",
 };
 
 const TO_UI: Record<DbCategory, UiCategory> = {
   BICYCLES_PARTS: "bikes",
   WATER_PUMPS: "pumps",
   SCALES: "scales",
+  OTHER: "other",
 };
 
 export function toDbCategory(cat: UiCategory): DbCategory {

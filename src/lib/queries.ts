@@ -119,6 +119,7 @@ export function useSettings() {
           telegram: s.telegram,
           email: s.email,
           mapUrl: s.mapUrl,
+          mapEmbedUrl: s.mapEmbedUrl,
           address: s.address,
           logo: s.logo,
         },

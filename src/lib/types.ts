@@ -1,4 +1,4 @@
-export type Category = "bikes" | "pumps" | "scales";
+export type Category = "bikes" | "pumps" | "scales" | "other";
 
 export interface Spec {
   label: string;
@@ -34,6 +34,7 @@ export interface SiteSettings {
   telegram: string;
   email: string;
   mapUrl: string;
+  mapEmbedUrl: string;
   address: string;
   logo: string;
 }

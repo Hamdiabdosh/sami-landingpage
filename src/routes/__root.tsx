@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "../lib/i18n";
+import { Toaster } from "@/components/ui/sonner";
 import { SiteShell } from "@/components/site/SiteShell";
 import { buildSeoHead, jsonLdScript, webSiteJsonLd } from "@/lib/seo";
 
@@ -87,7 +88,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => {
     const seo = buildSeoHead({
-      title: "Bicycles, Pumps & Scales · Dire Dawa",
+      title: "Bicycles, Water Pumps & Scales · Dire Dawa",
       path: "/",
     });
     return {
@@ -134,6 +135,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
+        <Toaster richColors position="top-center" />
         {publicSite ? (
           <SiteShell>
             <Outlet />

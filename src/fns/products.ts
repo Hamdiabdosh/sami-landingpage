@@ -8,14 +8,16 @@ import { adminMiddleware } from "./admin-middleware";
 
 const specSchema = z.object({ label: z.string(), value: z.string() });
 
+const categorySchema = z.enum(["bikes", "pumps", "scales", "other"]);
+
 const productInput = z.object({
   id: z.string().uuid().optional().or(z.literal("")),
   nameEn: z.string().min(1),
   nameAm: z.string().default(""),
-  category: z.enum(["bikes", "pumps", "scales"]),
+  category: categorySchema,
   subtype: z.string().optional(),
   descriptionEn: z.string().min(1),
-  descriptionAm: z.string().min(1),
+  descriptionAm: z.string().default(""),
   image: z.string().optional(),
   specs: z.array(specSchema).default([]),
   active: z.boolean().default(false),
@@ -23,8 +25,11 @@ const productInput = z.object({
 
 function validateActive(input: z.infer<typeof productInput>) {
   if (!input.active) return;
-  if (!input.nameEn || !input.descriptionEn || !input.descriptionAm) {
-    throw new Error("English name and EN/AM descriptions are required to publish.");
+  if (!input.nameEn || !input.descriptionEn) {
+    throw new Error("English name and description are required to publish.");
+  }
+  if (input.category === "other" && !input.subtype?.trim()) {
+    throw new Error("Subtype is required when category is Other.");
   }
   if (!input.image) throw new Error("Image is required before marking a product active.");
 }
@@ -34,7 +39,7 @@ export const listProducts = createServerFn({ method: "GET" })
     z
       .object({
         activeOnly: z.boolean().optional(),
-        category: z.enum(["bikes", "pumps", "scales"]).optional(),
+        category: categorySchema.optional(),
       })
       .optional(),
   )

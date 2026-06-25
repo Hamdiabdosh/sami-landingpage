@@ -13,7 +13,7 @@ import scaleImg from "@/assets/cat-scales.jpg";
 export const Route = createFileRoute("/")({
   head: () =>
     buildSeoHead({
-      title: "Bicycles, Pumps & Scales · Dire Dawa",
+      title: "Bicycles, Water Pumps & Scales · Dire Dawa",
       description:
         "Premium bicycles, water pumps and weighing scales — sourced and serviced by Sami General Trading in Dire Dawa, Ethiopia.",
       path: "/",
@@ -106,7 +106,7 @@ function Hero() {
         <div className="hidden lg:block absolute right-8 top-24 w-[340px]">
           {[
             { icon: Bike, label: "Bicycles", delay: 0.4 },
-            { icon: Droplet, label: "Pumps", delay: 0.55 },
+            { icon: Droplet, label: "Water Pumps", delay: 0.55 },
             { icon: Scale, label: "Scales", delay: 0.7 },
           ].map((b, i) => (
             <motion.div

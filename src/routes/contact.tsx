@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Phone, MessageCircle, Send, Mail, MapPin } from "lucide-react";
+import { Phone, MessageCircle, Send, Mail, MapPin, ExternalLink } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { getSettings } from "@/fns/settings";
 import { hoverLift, revealTransition, tapScale } from "@/lib/motion";
 import { buildSeoHead, jsonLdScript, localBusinessJsonLd } from "@/lib/seo";
+import { resolveMapEmbedUrl, resolveMapDirectionsUrl } from "@/lib/map-url";
+import { mailLink, telLink, tgLink, waLink } from "@/lib/contact-links";
 
 export const Route = createFileRoute("/contact")({
   loader: () => getSettings(),
@@ -23,12 +25,14 @@ export const Route = createFileRoute("/contact")({
 function Contact() {
   const { t } = useI18n();
   const settings = Route.useLoaderData();
+  const embedSrc = resolveMapEmbedUrl(settings.mapUrl, settings.mapEmbedUrl);
+  const directionsUrl = resolveMapDirectionsUrl(settings.mapUrl);
 
   const actions = [
-    { label: "Call", value: settings.phone, href: `tel:${settings.phone}`, icon: Phone, bg: "bg-primary text-primary-foreground" },
-    { label: "WhatsApp", value: settings.whatsapp, href: `https://wa.me/251${settings.whatsapp.replace(/^0/, "")}`, icon: MessageCircle, bg: "bg-[#25D366] text-white" },
-    { label: "Telegram", value: `@${settings.telegram}`, href: `https://t.me/${settings.telegram}`, icon: Send, bg: "bg-[#229ED9] text-white" },
-    { label: "Email", value: settings.email, href: `mailto:${settings.email}`, icon: Mail, bg: "bg-foreground text-background" },
+    { label: "Call", value: settings.phone, href: telLink(settings.phone), icon: Phone, bg: "bg-primary text-primary-foreground" },
+    { label: "WhatsApp", value: settings.whatsapp, href: waLink(settings.whatsapp), icon: MessageCircle, bg: "bg-[#25D366] text-white" },
+    { label: "Telegram", value: `@${settings.telegram.replace(/^@/, "")}`, href: tgLink(settings.telegram), icon: Send, bg: "bg-[#229ED9] text-white" },
+    { label: "Email", value: settings.email, href: mailLink(settings.email), icon: Mail, bg: "bg-foreground text-background" },
   ];
 
   return (
@@ -75,23 +79,41 @@ function Contact() {
           transition={revealTransition}
           className="rounded-3xl overflow-hidden border border-border bg-card"
         >
-          <div className="aspect-[16/9] w-full bg-muted">
-            <iframe
-              title="Map"
-              src={settings.mapUrl}
-              className="w-full h-full border-0"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          <div className="aspect-[16/9] w-full bg-muted relative">
+            {embedSrc ? (
+              <iframe
+                title="Map"
+                src={embedSrc}
+                className="w-full h-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
+            ) : (
+              <div className="absolute inset-0 grid place-items-center p-8 text-center">
+                <MapPin size={40} className="text-muted-foreground mb-3" />
+                <p className="text-muted-foreground text-sm max-w-sm">Map preview unavailable. Open directions in Google Maps.</p>
+              </div>
+            )}
           </div>
-          <div className="p-6 flex items-start gap-4">
-            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <MapPin size={20} />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{t("contact.address")}</p>
-              <p className="mt-1 font-display text-lg font-semibold">{settings.address}</p>
+          <div className="p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-start gap-4 min-w-0">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
+                <MapPin size={20} />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{t("contact.address")}</p>
+                <p className="mt-1 font-display text-lg font-semibold">{settings.address}</p>
+              </div>
             </div>
+            <a
+              href={directionsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-gold px-5 py-3 text-sm font-semibold text-gold-foreground hover:brightness-110 shrink-0"
+            >
+              {t("contact.directions")} <ExternalLink size={16} />
+            </a>
           </div>
         </motion.div>
       </section>

@@ -89,12 +89,32 @@ function SettingsAdmin() {
           <Field label="Address">
             <input value={s.address} onChange={(e) => setS({ ...s, address: e.target.value })} className={inputCls} />
           </Field>
-          <Field label="Google Maps embed URL">
-            <input value={s.mapUrl} onChange={(e) => setS({ ...s, mapUrl: e.target.value })} className={inputCls} placeholder="https://www.google.com/maps?q=...&output=embed" />
+          <Field label="Google Maps link (directions)">
+            <input
+              value={s.mapUrl}
+              onChange={(e) => setS({ ...s, mapUrl: e.target.value })}
+              className={inputCls}
+              placeholder="https://maps.app.goo.gl/... or Google Maps place URL"
+            />
           </Field>
-          {s.mapUrl && (
+          <Field label="Google Maps embed URL (for map on Contact page)">
+            <input
+              value={s.mapEmbedUrl}
+              onChange={(e) => setS({ ...s, mapEmbedUrl: e.target.value })}
+              className={inputCls}
+              placeholder="https://www.google.com/maps/embed?pb=..."
+            />
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              In Google Maps: Share → Embed a map → copy the iframe <code className="text-foreground">src</code> URL.
+            </p>
+          </Field>
+          {(s.mapEmbedUrl || s.mapUrl) && (
             <div className="aspect-[16/9] rounded-xl overflow-hidden border border-border bg-muted">
-              <iframe src={s.mapUrl} title="Map preview" className="w-full h-full border-0" />
+              <iframe
+                src={s.mapEmbedUrl || s.mapUrl}
+                title="Map preview"
+                className="w-full h-full border-0"
+              />
             </div>
           )}
         </Section>

@@ -11,6 +11,7 @@ enum Category {
   BICYCLES_PARTS
   WATER_PUMPS
   SCALES
+  OTHER
 }
 
 model Product {
@@ -51,6 +52,7 @@ model SiteSettings {
   telegramHandle String
   email          String
   mapUrl         String
+  mapEmbedUrl    String?
   address        String  @default("Dire Dawa, Ethiopia")
   logoUrl        String?
 }
