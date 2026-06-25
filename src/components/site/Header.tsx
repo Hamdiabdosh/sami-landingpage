@@ -31,7 +31,7 @@ export function Header() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: EASE }}
       className={`sticky top-0 z-50 border-b border-border transition-[background,box-shadow,backdrop-filter] duration-300 ${
-        scrolled ? "bg-background/95 shadow-sm backdrop-blur-lg" : "bg-background/85 backdrop-blur-md"
+        scrolled ? "bg-surface/95 shadow-sm backdrop-blur-lg" : "bg-surface/85 backdrop-blur-md"
       }`}
     >
       <motion.div
@@ -74,6 +74,12 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            to="/contact"
+            className="hidden md:inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+          >
+            {t("nav.contact")}
+          </Link>
           <LangToggle value={lang} onChange={setLang} />
           <motion.button
             whileTap={tapScale}

@@ -30,7 +30,7 @@ function Contact() {
 
   const actions = [
     { label: t("contact.call"), value: settings.phone, href: telLink(settings.phone), icon: Phone, bg: "bg-primary text-primary-foreground" },
-    { label: t("contact.whatsapp"), value: settings.whatsapp, href: waLink(settings.whatsapp), icon: MessageCircle, bg: "bg-[#25D366] text-white" },
+    { label: t("contact.whatsapp"), value: settings.whatsapp, href: waLink(settings.whatsapp), icon: MessageCircle, bg: "bg-whatsapp text-whatsapp-foreground" },
     { label: t("contact.telegram"), value: `@${settings.telegram.replace(/^@/, "")}`, href: tgLink(settings.telegram), icon: Send, bg: "bg-[#229ED9] text-white" },
     { label: t("contact.email"), value: settings.email, href: mailLink(settings.email), icon: Mail, bg: "bg-foreground text-background" },
   ];

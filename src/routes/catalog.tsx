@@ -8,7 +8,7 @@ import { CatalogSkeleton } from "@/components/site/CatalogSkeleton";
 import { useI18n } from "@/lib/i18n";
 import { listProducts } from "@/fns/products";
 import type { Category } from "@/lib/types";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, categoryLabel } from "@/lib/categories";
 import { revealTransition, spring, tapScale } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 
@@ -35,7 +35,7 @@ function CatalogPending() {
 }
 
 function Catalog() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { cat } = Route.useSearch();
   const products = Route.useLoaderData();
 
@@ -56,21 +56,43 @@ function Catalog() {
 
   return (
     <>
-      <section className="container-x pt-14 pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={revealTransition}
-        >
-          <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">Catalog</p>
-          <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight text-balance">
-            {t("catalog.title")}
-          </h1>
-          <p className="mt-3 text-muted-foreground max-w-xl">{t("catalog.sub")}</p>
-        </motion.div>
+      {cat ? (
+        <section className="relative overflow-hidden bg-primary text-primary-foreground">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-transparent" />
+          <div className="container-x relative py-14 md:py-16">
+            <nav className="mb-6 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-glow">
+              <Link to="/" className="hover:underline">
+                {t("nav.home")}
+              </Link>
+              <span className="mx-2 opacity-50">/</span>
+              <span>{categoryLabel(cat, lang)}</span>
+            </nav>
+            <h1 className="font-display text-4xl font-bold leading-[1.05] md:text-5xl">
+              {categoryLabel(cat, lang)}
+            </h1>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-primary-foreground/80">
+              {cat === "other" ? t("catalog.sub") : t(`cat.desc.${cat}` as "cat.desc.bikes")}
+            </p>
+          </div>
+        </section>
+      ) : (
+        <section className="container-x pt-14 pb-8">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={revealTransition}
+          >
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">{t("nav.catalog")}</p>
+            <h1 className="mt-2 font-display text-4xl font-bold tracking-tight md:text-5xl">{t("catalog.title")}</h1>
+            <p className="mt-3 max-w-xl text-muted-foreground">{t("catalog.sub")}</p>
+          </motion.div>
+        </section>
+      )}
+
+      <section className={`container-x ${cat ? "pt-8 pb-8" : "pb-8"}`}>
 
         <LayoutGroup>
-          <div className="mt-8 flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${cat ? "" : "mt-8"}`}>
             {filters.map((f) => {
               const active = f.id === "all" ? !cat : cat === f.id;
               return (
@@ -111,6 +133,11 @@ function Catalog() {
       </section>
 
       <section className="container-x pb-24">
+        {filtered.length > 0 && (
+          <p className="mb-6 text-sm text-muted-foreground">
+            {filtered.length} {filtered.length === 1 ? "product" : "products"}
+          </p>
+        )}
         <AnimatePresence mode="popLayout">
           {filtered.length === 0 ? (
             <motion.div
