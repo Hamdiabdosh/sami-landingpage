@@ -5,7 +5,9 @@ import { AdminShell } from "@/components/admin/AdminShell";
 import { requireAdminSession } from "@/lib/admin-route";
 import { uploadImage, useSettings } from "@/lib/queries";
 import type { SiteSettings } from "@/lib/types";
+import { formatServerError } from "@/lib/format-error";
 import { adminHead } from "@/lib/seo";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/settings")({
   beforeLoad: requireAdminSession,
@@ -16,7 +18,6 @@ export const Route = createFileRoute("/admin/settings")({
 function SettingsAdmin() {
   const { settings, save, isLoading } = useSettings();
   const [s, setS] = useState<SiteSettings | null>(null);
-  const [savedAt, setSavedAt] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -33,7 +34,7 @@ function SettingsAdmin() {
         const logo = await uploadImage(String(r.result));
         setS({ ...s, logo });
       } catch (e) {
-        alert(e instanceof Error ? e.message : "Upload failed");
+        toast.error(formatServerError(e));
       } finally {
         setUploading(false);
       }
@@ -47,10 +48,9 @@ function SettingsAdmin() {
     setSaving(true);
     try {
       await save(s);
-      setSavedAt(Date.now());
-      setTimeout(() => setSavedAt(null), 2500);
+      toast.success("Settings saved");
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to save");
+      toast.error(formatServerError(err));
     } finally {
       setSaving(false);
     }
@@ -135,7 +135,6 @@ function SettingsAdmin() {
           <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-6 py-3.5 font-semibold hover:brightness-110 shadow-lg disabled:opacity-60">
             <Save size={16} /> {saving ? "Saving…" : "Save Changes"}
           </button>
-          {savedAt && <span className="text-sm text-green-600 font-medium">Saved ✓</span>}
         </div>
       </form>
     </AdminShell>

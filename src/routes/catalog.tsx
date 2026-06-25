@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { z } from "zod";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CatalogSkeleton } from "@/components/site/CatalogSkeleton";
@@ -38,10 +39,15 @@ function Catalog() {
   const { cat } = Route.useSearch();
   const products = Route.useLoaderData();
 
-  const filtered = useMemo(
-    () => products.filter((p) => !cat || p.category === cat),
-    [products, cat],
-  );
+  const [q, setQ] = useState("");
+  const filtered = useMemo(() => {
+    const byCat = products.filter((p) => !cat || p.category === cat);
+    const term = q.trim().toLowerCase();
+    if (!term) return byCat;
+    return byCat.filter((p) =>
+      [p.nameEn, p.nameAm, p.subtype].some((s) => s?.toLowerCase().includes(term)),
+    );
+  }, [products, cat, q]);
 
   const filters: { id: Category | "all"; label: string }[] = [
     { id: "all", label: t("cat.all") },
@@ -91,6 +97,17 @@ function Catalog() {
             })}
           </div>
         </LayoutGroup>
+
+        <div className="mt-6 relative max-w-md">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("catalog.search")}
+            className="w-full rounded-full border border-border bg-background py-2.5 pl-11 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-gold/50"
+          />
+        </div>
       </section>
 
       <section className="container-x pb-24">
@@ -105,7 +122,7 @@ function Catalog() {
             >
               <p className="text-lg font-medium">{t("catalog.empty")}</p>
               <Link to="/catalog" className="mt-4 inline-block text-sm text-gold underline-offset-4 hover:underline">
-                View all products
+                {t("catalog.viewAll")}
               </Link>
             </motion.div>
           ) : (

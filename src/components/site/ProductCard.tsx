@@ -7,7 +7,7 @@ import { EASE } from "@/lib/motion";
 import { productCategoryBadge } from "@/lib/categories";
 
 export function ProductCard({ product, index = 0 }: { product: Product; index?: number }) {
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const name = lang === "en" ? product.nameEn : product.nameAm || product.nameEn;
   const catLabel = productCategoryBadge(product, lang);
 
@@ -37,6 +37,9 @@ export function ProductCard({ product, index = 0 }: { product: Product; index?: 
           />
           <span className="absolute top-3 left-3 inline-flex items-center rounded-full bg-background/90 backdrop-blur px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground">
             {catLabel}
+          </span>
+          <span className="absolute bottom-3 left-3 inline-flex items-center rounded-full bg-gold/95 px-2.5 py-1 text-[10px] font-semibold text-gold-foreground">
+            {t("product.priceInquire")}
           </span>
           <span className="absolute top-3 right-3 inline-flex items-center justify-center h-9 w-9 rounded-full bg-foreground text-background opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
             <ArrowUpRight size={16} />

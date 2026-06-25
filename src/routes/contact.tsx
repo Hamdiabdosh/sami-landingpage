@@ -29,17 +29,17 @@ function Contact() {
   const directionsUrl = resolveMapDirectionsUrl(settings.mapUrl);
 
   const actions = [
-    { label: "Call", value: settings.phone, href: telLink(settings.phone), icon: Phone, bg: "bg-primary text-primary-foreground" },
-    { label: "WhatsApp", value: settings.whatsapp, href: waLink(settings.whatsapp), icon: MessageCircle, bg: "bg-[#25D366] text-white" },
-    { label: "Telegram", value: `@${settings.telegram.replace(/^@/, "")}`, href: tgLink(settings.telegram), icon: Send, bg: "bg-[#229ED9] text-white" },
-    { label: "Email", value: settings.email, href: mailLink(settings.email), icon: Mail, bg: "bg-foreground text-background" },
+    { label: t("contact.call"), value: settings.phone, href: telLink(settings.phone), icon: Phone, bg: "bg-primary text-primary-foreground" },
+    { label: t("contact.whatsapp"), value: settings.whatsapp, href: waLink(settings.whatsapp), icon: MessageCircle, bg: "bg-[#25D366] text-white" },
+    { label: t("contact.telegram"), value: `@${settings.telegram.replace(/^@/, "")}`, href: tgLink(settings.telegram), icon: Send, bg: "bg-[#229ED9] text-white" },
+    { label: t("contact.email"), value: settings.email, href: mailLink(settings.email), icon: Mail, bg: "bg-foreground text-background" },
   ];
 
   return (
     <>
       <section className="container-x pt-14">
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={revealTransition}>
-          <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">Contact</p>
+          <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">{t("nav.contact")}</p>
           <h1 className="mt-3 font-display text-4xl md:text-5xl font-bold tracking-tight text-balance">{t("contact.title")}</h1>
           <p className="mt-3 text-muted-foreground max-w-xl">{t("contact.sub")}</p>
         </motion.div>

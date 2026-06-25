@@ -2,19 +2,24 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, MessageCircle, Send, Phone, Mail } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { getProductById } from "@/fns/products";
+import { ProductCard } from "@/components/site/ProductCard";
+import { getProductById, listProducts } from "@/fns/products";
 import { getSettings } from "@/fns/settings";
 import { EASE, fadeUp, hoverLift, staggerContainer, tapScale } from "@/lib/motion";
 import { buildSeoHead, jsonLdScript, productJsonLd, truncate } from "@/lib/seo";
 
 export const Route = createFileRoute("/catalog/$id")({
   loader: async ({ params }) => {
-    const [product, settings] = await Promise.all([
+    const [product, settings, all] = await Promise.all([
       getProductById({ data: { id: params.id } }),
       getSettings(),
+      listProducts(),
     ]);
     if (!product) throw notFound();
-    return { product, settings };
+    const related = all
+      .filter((p) => p.category === product.category && p.id !== product.id)
+      .slice(0, 3);
+    return { product, settings, related };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
@@ -54,7 +59,7 @@ export const Route = createFileRoute("/catalog/$id")({
 });
 
 function ProductDetail() {
-  const { product, settings } = Route.useLoaderData();
+  const { product, settings, related } = Route.useLoaderData();
   const { t, lang } = useI18n();
 
   const name = lang === "en" ? product.nameEn : product.nameAm || product.nameEn;
@@ -149,6 +154,17 @@ function ProductDetail() {
             </motion.div>
           </motion.div>
         </div>
+
+      {related.length > 0 && (
+        <div className="mt-20 border-t border-border pt-14">
+          <h2 className="font-display text-2xl md:text-3xl font-bold">{t("product.related")}</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+        </div>
+      )}
       </section>
   );
 }

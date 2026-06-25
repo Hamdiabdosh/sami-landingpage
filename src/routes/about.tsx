@@ -19,7 +19,7 @@ export const Route = createFileRoute("/about")({
 function About() {
   const { t, lang } = useI18n();
   const settings = Route.useLoaderData();
-  const story = lang === "en" ? settings.aboutEn : settings.aboutAm;
+  const story = lang === "en" ? settings.aboutEn : settings.aboutAm || settings.aboutEn;
 
   return (
     <section className="container-x py-16 md:py-24 max-w-3xl">
@@ -29,7 +29,7 @@ function About() {
           viewport={{ once: true }}
           className="text-xs uppercase tracking-[0.22em] text-gold font-semibold"
         >
-          About
+          {t("about.label")}
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 18 }}
@@ -52,9 +52,9 @@ function About() {
 
         <div className="mt-14 grid grid-cols-3 gap-6 border-t border-border pt-10">
           {[
-            { k: "3", v: "Product categories" },
-            { k: "100+", v: "SKUs in stock" },
-            { k: "Dire Dawa", v: "Local presence" },
+            { k: "4", v: t("about.stat.cats") },
+            { k: "100+", v: t("about.stat.skus") },
+            { k: "Dire Dawa", v: t("about.stat.local") },
           ].map((s, i) => (
             <motion.div
               key={s.v}

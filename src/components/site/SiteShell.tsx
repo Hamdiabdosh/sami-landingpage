@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { PageTransition } from "./PageTransition";
+import { WhatsAppFab } from "./WhatsAppFab";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <PageTransition>{children}</PageTransition>
       </main>
       <Footer />
+      <WhatsAppFab />
     </div>
   );
 }

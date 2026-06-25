@@ -2,7 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { ArrowRight, Bike, Droplet, Scale, ShieldCheck, Wrench, MapPin } from "lucide-react";
+import { ProductCard } from "@/components/site/ProductCard";
 import { useI18n } from "@/lib/i18n";
+import { listProducts } from "@/fns/products";
+import { listGalleryImages } from "@/fns/gallery";
+import type { GalleryImage, Product } from "@/lib/types";
 import { EASE, fadeUp, fadeUpSmall, hoverLift, revealTransition, staggerContainer, tapScale } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 import heroImg from "@/assets/hero.jpg";
@@ -11,6 +15,10 @@ import pumpImg from "@/assets/cat-pumps.jpg";
 import scaleImg from "@/assets/cat-scales.jpg";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const [products, gallery] = await Promise.all([listProducts(), listGalleryImages()]);
+    return { featured: products.slice(0, 4), gallery: gallery.slice(0, 4) };
+  },
   head: () =>
     buildSeoHead({
       title: "Bicycles, Water Pumps & Scales · Dire Dawa",
@@ -22,10 +30,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { featured, gallery } = Route.useLoaderData();
   return (
     <>
       <Hero />
       <Categories />
+      {featured.length > 0 && <Featured products={featured} />}
+      {gallery.length > 0 && <GalleryTeaser images={gallery} />}
       <WhyUs />
       <CTA />
     </>
@@ -105,9 +116,9 @@ function Hero() {
         {/* Floating product badges (animated) */}
         <div className="hidden lg:block absolute right-8 top-24 w-[340px]">
           {[
-            { icon: Bike, label: "Bicycles", delay: 0.4 },
-            { icon: Droplet, label: "Water Pumps", delay: 0.55 },
-            { icon: Scale, label: "Scales", delay: 0.7 },
+            { icon: Bike, label: t("hero.badge.bikes"), delay: 0.4 },
+            { icon: Droplet, label: t("hero.badge.pumps"), delay: 0.55 },
+            { icon: Scale, label: t("hero.badge.scales"), delay: 0.7 },
           ].map((b, i) => (
             <motion.div
               key={b.label}
@@ -129,7 +140,7 @@ function Hero() {
                 <b.icon size={20} />
               </span>
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-gold">In stock</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-gold">{t("hero.inStock")}</p>
                 <p className="font-display font-semibold">{b.label}</p>
               </div>
             </motion.div>
@@ -141,11 +152,11 @@ function Hero() {
 }
 
 function Categories() {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const cats = [
-    { id: "bikes", img: bikeImg, title: t("cat.bikes"), desc: lang === "en" ? "City, mountain & kids bikes, plus full range of spare parts." : "የከተማ፣ ማውንቴን እና የልጆች ብስክሌቶች እንዲሁም ሙሉ መለዋወጫዎች።" },
-    { id: "pumps", img: pumpImg, title: t("cat.pumps"), desc: lang === "en" ? "Surface and submersible pumps for homes, farms and industry." : "ለቤት፣ ለእርሻና ለኢንዱስትሪ ፓምፖች።" },
-    { id: "scales", img: scaleImg, title: t("cat.scales"), desc: lang === "en" ? "Platform, counter and digital scales calibrated for daily trade." : "ለዕለታዊ ንግድ የሚሆኑ ሚዛኖች።" },
+    { id: "bikes", img: bikeImg, title: t("cat.bikes"), desc: t("cat.desc.bikes") },
+    { id: "pumps", img: pumpImg, title: t("cat.pumps"), desc: t("cat.desc.pumps") },
+    { id: "scales", img: scaleImg, title: t("cat.scales"), desc: t("cat.desc.scales") },
   ] as const;
 
   return (
@@ -187,7 +198,7 @@ function Categories() {
                 <h3 className="mt-2 font-display text-2xl font-bold">{c.title}</h3>
                 <p className="mt-2 text-sm text-steel-foreground/75 max-w-xs">{c.desc}</p>
                 <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gold">
-                  Browse <ArrowRight size={14} className="transition-transform group-hover:translate-x-1.5" />
+                  {t("cat.browse")} <ArrowRight size={14} className="transition-transform group-hover:translate-x-1.5" />
                 </span>
               </div>
             </Link>
@@ -198,11 +209,73 @@ function Categories() {
   );
 }
 
+function Featured({ products }: { products: Product[] }) {
+  const { t } = useI18n();
+  return (
+    <section className="container-x py-16 md:py-20 border-t border-border">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">{t("home.featured.sub")}</p>
+          <h2 className="mt-3 font-display text-3xl md:text-4xl font-bold tracking-tight">{t("home.featured.title")}</h2>
+        </div>
+        <Link to="/catalog" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:underline underline-offset-4">
+          {t("home.featured.more")} <ArrowRight size={14} />
+        </Link>
+      </div>
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {products.map((p, i) => (
+          <ProductCard key={p.id} product={p} index={i} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function GalleryTeaser({ images }: { images: GalleryImage[] }) {
+  const { t } = useI18n();
+  return (
+    <section className="bg-muted/40 border-y border-border">
+      <div className="container-x py-16 md:py-20">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.22em] text-gold font-semibold">{t("home.gallery.sub")}</p>
+            <h2 className="mt-3 font-display text-3xl md:text-4xl font-bold tracking-tight">{t("home.gallery.title")}</h2>
+          </div>
+          <Link to="/gallery" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:underline underline-offset-4">
+            {t("home.gallery.more")} <ArrowRight size={14} />
+          </Link>
+        </div>
+        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          {images.map((img, i) => (
+            <motion.div
+              key={img.id}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ ...revealTransition, delay: i * 0.06 }}
+            >
+              <Link to="/gallery" className="group block aspect-square rounded-2xl overflow-hidden bg-muted">
+                <img
+                  src={img.src}
+                  alt={img.captionEn || ""}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function WhyUs() {
+  const { t } = useI18n();
   const items = [
-    { icon: ShieldCheck, title: "Trusted goods", body: "We stock proven brands and inspect every shipment before it reaches our shop floor." },
-    { icon: Wrench, title: "Spares & service", body: "Full inventory of spare parts and quick fitting support for bicycles and pumps." },
-    { icon: MapPin, title: "Local to Dire Dawa", body: "On-the-ground presence means fast pickup, fair prices and honest after-sales." },
+    { icon: ShieldCheck, title: t("why.1.title"), body: t("why.1.body") },
+    { icon: Wrench, title: t("why.2.title"), body: t("why.2.body") },
+    { icon: MapPin, title: t("why.3.title"), body: t("why.3.body") },
   ];
   return (
     <section className="bg-muted/50 border-y border-border">
@@ -241,9 +314,9 @@ function CTA() {
         <div className="absolute -top-20 -right-20 h-72 w-72 rounded-full bg-gold/30 blur-3xl" />
         <div className="relative max-w-2xl">
           <h2 className="font-display text-3xl md:text-5xl font-bold leading-tight text-balance">
-            Need a price or availability? <span className="text-gold">Talk to us directly.</span>
+            {t("cta.title")} <span className="text-gold">{t("cta.titleAccent")}</span>
           </h2>
-          <p className="mt-4 text-steel-foreground/75">We respond fast on WhatsApp and Telegram, in Amharic or English.</p>
+          <p className="mt-4 text-steel-foreground/75">{t("cta.sub")}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <motion.div whileHover={hoverLift} whileTap={tapScale}>
               <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3.5 text-sm font-semibold text-gold-foreground hover:brightness-110 transition-all">
