@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { BuiltByRaafat } from "@/components/brand/BuiltByRaafat";
 import { Logo } from "@/components/site/Logo";
 import { adminHead } from "@/lib/seo";
 
@@ -96,6 +97,7 @@ function AdminLogin() {
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
+        <BuiltByRaafat className="mt-6 text-center" />
       </motion.div>
     </div>
   );

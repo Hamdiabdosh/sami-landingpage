@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Phone, MessageCircle, Send, Mail, MapPin } from "lucide-react";
 import { Logo } from "./Logo";
+import { BuiltByRaafat } from "@/components/brand/BuiltByRaafat";
 import { useI18n } from "@/lib/i18n";
 import { useSettings, queryKeys } from "@/lib/queries";
 import { mailLink, mapDirectionsLink, telLink, tgLink, waLink } from "@/lib/contact-links";
@@ -88,7 +89,10 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="container-x flex flex-col items-center justify-between gap-2 py-5 text-xs text-muted-foreground sm:flex-row">
           <span>© {new Date().getFullYear()} Sami General Trading. {t("footer.rights")}</span>
-          <Link to="/admin/login" className="transition-colors hover:text-foreground">Admin</Link>
+          <div className="flex items-center gap-4">
+            <BuiltByRaafat />
+            <Link to="/admin/login" className="transition-colors hover:text-foreground">Admin</Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -2,6 +2,7 @@ import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, Package, Image as ImgIcon, Settings as SettingsIcon, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { authClient } from "@/lib/auth-client";
+import { BuiltByRaafat } from "@/components/brand/BuiltByRaafat";
 import { Logo } from "@/components/site/Logo";
 
 const items: { to: "/admin" | "/admin/products" | "/admin/gallery" | "/admin/settings"; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
@@ -40,14 +41,14 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
 
       <div className="flex">
         <aside
-          className={`fixed lg:sticky top-0 lg:top-0 z-30 h-screen w-64 shrink-0 bg-steel text-steel-foreground transition-transform ${
+          className={`fixed lg:sticky top-0 lg:top-0 z-30 h-screen w-64 shrink-0 bg-steel text-steel-foreground transition-transform flex flex-col ${
             open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           }`}
         >
           <div className="h-16 flex items-center px-5 border-b border-white/10">
             <Logo size={32} tone="light" />
           </div>
-          <nav className="p-3 flex flex-col gap-1">
+          <nav className="p-3 flex flex-col gap-1 flex-1 overflow-y-auto">
             {items.map((it) => {
               const active = it.exact ? pathname === it.to : pathname.startsWith(it.to);
               return (
@@ -76,6 +77,12 @@ export function AdminShell({ children, title }: { children: ReactNode; title: st
               <LogOut size={18} /> Logout
             </button>
           </nav>
+          <div className="border-t border-white/10 p-4 shrink-0">
+            <BuiltByRaafat
+              className="text-[10px] text-steel-foreground/50"
+              linkClassName="font-semibold text-steel-foreground/70 hover:text-gold transition-colors"
+            />
+          </div>
         </aside>
 
         {open && (
