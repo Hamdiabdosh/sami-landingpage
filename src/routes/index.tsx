@@ -2,13 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ShieldCheck, Wrench, MapPin, Phone, MessageCircle } from "lucide-react";
 import { Categories } from "@/components/site/Categories";
+import { Featured } from "@/components/site/Featured";
 import { Hero } from "@/components/site/Hero";
-import { ProductCard } from "@/components/site/ProductCard";
 import { useI18n } from "@/lib/i18n";
 import { listProducts } from "@/fns/products";
 import { listGalleryImages } from "@/fns/gallery";
 import { getSettings } from "@/fns/settings";
-import type { GalleryImage, Product, SiteSettings } from "@/lib/types";
+import type { GalleryImage, SiteSettings } from "@/lib/types";
 import { revealTransition } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 import { telLink, waLink } from "@/lib/contact-links";
@@ -43,38 +43,6 @@ function Home() {
       <WhyUs />
       <Visit settings={settings} />
     </>
-  );
-}
-
-function Featured({ products }: { products: Product[] }) {
-  const { t } = useI18n();
-  return (
-    <section id="featured" className="border-y border-border bg-surface-muted/60 py-16 md:py-24">
-      <div className="container-x">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
-              {t("home.featured.sub")}
-            </div>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
-              {t("home.featured.title")}
-            </h2>
-          </div>
-          <Link
-            to="/catalog"
-            className="hidden text-sm font-semibold text-gold hover:underline md:inline"
-          >
-            {t("home.featured.more")} →
-          </Link>
-        </div>
-
-        <div className="flex snap-x gap-5 overflow-x-auto pb-4 hide-scrollbar md:grid md:grid-cols-4 md:overflow-visible">
-          {products.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} variant="compact" />
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
