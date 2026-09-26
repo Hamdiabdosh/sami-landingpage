@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck, Wrench, MapPin, Phone, MessageCircle } from "lucide-react";
+import { Hero } from "@/components/site/Hero";
 import { ProductCard } from "@/components/site/ProductCard";
 import { useI18n } from "@/lib/i18n";
 import { listProducts } from "@/fns/products";
 import { listGalleryImages } from "@/fns/gallery";
 import { getSettings } from "@/fns/settings";
 import type { GalleryImage, Product, SiteSettings } from "@/lib/types";
-import { fadeUp, fadeUpSmall, hoverLift, revealTransition, staggerContainer, tapScale } from "@/lib/motion";
+import { revealTransition } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 import { telLink, waLink } from "@/lib/contact-links";
-import heroImg from "@/assets/hero.jpg";
 import bikeImg from "@/assets/cat-bikes.jpg";
 import pumpImg from "@/assets/cat-pumps.jpg";
 import scaleImg from "@/assets/cat-scales.jpg";
@@ -46,97 +45,6 @@ function Home() {
       <WhyUs />
       <Visit settings={settings} />
     </>
-  );
-}
-
-function Hero() {
-  const { t } = useI18n();
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, reduced ? 0 : 60]);
-  const titleParts = t("hero.title").split(".");
-  const line1 = titleParts[0]?.trim() ?? t("hero.title");
-  const line2 = titleParts[1]?.trim();
-
-  const badges = [
-    t("hero.badge.bikes"),
-    t("hero.badge.pumps"),
-    t("hero.badge.scales"),
-  ];
-
-  return (
-    <section ref={ref} className="relative overflow-hidden bg-primary text-primary-foreground">
-      <motion.div className="absolute inset-0 opacity-30" style={{ y: bgY }}>
-        <img src={heroImg} alt="" aria-hidden className="h-full w-full object-cover" />
-      </motion.div>
-      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/85 to-transparent" />
-      <div
-        className="absolute -right-32 -bottom-32 h-96 w-96 rounded-full opacity-40 blur-3xl"
-        style={{ background: "var(--color-primary-glow)" }}
-      />
-
-      <div className="container-x relative grid gap-10 pt-16 pb-20 md:grid-cols-2 md:items-center md:pt-24 md:pb-28">
-        <motion.div initial="hidden" animate="show" variants={staggerContainer}>
-          <motion.div
-            variants={fadeUpSmall}
-            className="mb-5 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-glow"
-          >
-            <span className="h-px w-8 bg-primary-glow" />
-            {t("hero.tag")}
-          </motion.div>
-
-          <motion.h1 variants={staggerContainer} className="text-4xl font-bold leading-[1.05] md:text-6xl">
-            <motion.span variants={fadeUp} className="block font-display">
-              {line1}.
-            </motion.span>
-            {line2 && (
-              <motion.span variants={fadeUp} className="block font-display text-primary-glow">
-                {line2}.
-              </motion.span>
-            )}
-          </motion.h1>
-
-          <motion.p variants={fadeUp} className="mt-5 max-w-md text-base leading-relaxed text-primary-foreground/80">
-            {t("hero.sub")}
-          </motion.p>
-
-          <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3">
-            <motion.div whileHover={hoverLift} whileTap={tapScale}>
-              <Link
-                to="/catalog"
-                className="inline-flex items-center gap-2 rounded-lg bg-surface px-6 py-3 text-sm font-semibold text-primary shadow-xl transition hover:translate-y-[-1px]"
-              >
-                {t("cta.catalog")}
-                <ArrowRight size={16} />
-              </Link>
-            </motion.div>
-            <motion.div whileHover={hoverLift} whileTap={tapScale}>
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 rounded-lg border border-primary-foreground/25 px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10"
-              >
-                {t("cta.contact")}
-              </Link>
-            </motion.div>
-          </motion.div>
-
-          <motion.div variants={fadeUp} className="mt-10 grid max-w-md grid-cols-3 gap-3">
-            {badges.map((label) => (
-              <div
-                key={label}
-                className="rounded-lg border border-primary-foreground/15 bg-primary-foreground/5 px-3 py-2.5"
-              >
-                <div className="text-[10px] font-semibold uppercase tracking-widest text-primary-glow">
-                  {t("hero.inStock")}
-                </div>
-                <div className="mt-0.5 text-sm font-semibold">{label}</div>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-      </div>
-    </section>
   );
 }
 

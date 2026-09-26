@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from "framer-motion";
 import { Logo } from "./Logo";
 import { useI18n, type Lang } from "@/lib/i18n";
-import { EASE, spring, tapScale } from "@/lib/motion";
+import { EASE, tapScale } from "@/lib/motion";
 
 export function Header() {
   const { t, lang, setLang } = useI18n();
@@ -27,36 +27,38 @@ export function Header() {
 
   return (
     <motion.header
-      initial={{ y: -24, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: EASE }}
-      className={`sticky top-0 z-50 border-b border-border transition-[background,box-shadow,backdrop-filter] duration-300 ${
-        scrolled ? "bg-surface/95 shadow-sm backdrop-blur-lg" : "bg-surface/85 backdrop-blur-md"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6, ease: EASE }}
+      className={`sticky top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        scrolled
+          ? "border-b border-border/80 bg-background/92 backdrop-blur-md"
+          : "border-b border-transparent bg-background/70 backdrop-blur-sm"
       }`}
     >
+      {/* Thin gold reading-progress — restrained editorial accent */}
       <motion.div
-        className="absolute bottom-0 left-0 right-0 h-[2px] origin-left bg-gold"
+        className="absolute bottom-0 left-0 right-0 h-px origin-left bg-gold"
         style={{ scaleX: scrollYProgress }}
       />
 
       <motion.div
-        animate={{ height: scrolled ? 56 : 64 }}
-        transition={{ duration: 0.25, ease: EASE }}
-        className="container-x flex items-center justify-between"
+        animate={{ height: scrolled ? 52 : 64 }}
+        transition={{ duration: 0.28, ease: EASE }}
+        className="container-x flex items-center justify-between gap-6"
       >
-        <Link to="/" className="flex items-center" onClick={() => setOpen(false)}>
-          <Logo size={scrolled ? 36 : 40} />
+        <Link to="/" className="flex shrink-0 items-center py-1" onClick={() => setOpen(false)}>
+          <Logo size={scrolled ? 32 : 36} />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-7">
+        <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
           {links.map((l) => {
-            const active =
-              l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
+            const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
             return (
               <Link
                 key={l.to}
                 to={l.to}
-                className={`relative text-sm font-medium tracking-wide transition-colors ${
+                className={`relative py-1 text-[13px] tracking-[0.04em] transition-colors ${
                   active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -64,8 +66,8 @@ export function Header() {
                 {active && (
                   <motion.span
                     layoutId="nav-underline"
-                    className="absolute -bottom-1.5 left-0 right-0 h-[2px] bg-gold rounded-full"
-                    transition={spring}
+                    className="absolute inset-x-0 -bottom-0.5 h-px bg-gold"
+                    transition={{ duration: 0.25, ease: EASE }}
                   />
                 )}
               </Link>
@@ -73,21 +75,25 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4 sm:gap-5">
           <Link
             to="/contact"
-            className="hidden md:inline-flex rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90"
+            className="hidden text-[13px] font-medium tracking-[0.04em] text-foreground transition-colors hover:text-gold md:inline-flex"
           >
             {t("nav.contact")}
           </Link>
+
           <LangToggle value={lang} onChange={setLang} />
+
           <motion.button
             whileTap={tapScale}
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-md border border-border"
+            type="button"
+            className="inline-flex h-11 w-11 items-center justify-center text-foreground md:hidden"
             onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
           >
-            {open ? <X size={18} /> : <Menu size={18} />}
+            {open ? <X size={20} strokeWidth={1.5} /> : <Menu size={20} strokeWidth={1.5} />}
           </motion.button>
         </div>
       </motion.div>
@@ -98,21 +104,29 @@ export function Header() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: EASE }}
-            className="md:hidden border-t border-border overflow-hidden"
+            transition={{ duration: 0.28, ease: EASE }}
+            className="overflow-hidden border-t border-border/70 bg-background md:hidden"
           >
-            <div className="container-x py-3 flex flex-col">
-              {links.map((l) => (
-                <Link
-                  key={l.to}
-                  to={l.to}
-                  onClick={() => setOpen(false)}
-                  className="py-3 px-1 text-base font-medium border-b border-border last:border-b-0"
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </div>
+            <nav className="container-x flex flex-col py-2" aria-label="Mobile">
+              {links.map((l) => {
+                const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
+                return (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={() => setOpen(false)}
+                    className={`border-b border-border/50 py-4 text-base tracking-[0.02em] last:border-b-0 ${
+                      active ? "text-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    {l.label}
+                    {active && (
+                      <span className="ml-3 inline-block h-px w-6 translate-y-[-3px] bg-gold align-middle" />
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
@@ -122,25 +136,31 @@ export function Header() {
 
 function LangToggle({ value, onChange }: { value: Lang; onChange: (l: Lang) => void }) {
   return (
-    <div className="relative inline-flex rounded-full border border-border bg-card p-1 text-xs font-semibold">
-      {(["en", "am"] as const).map((l) => (
-        <motion.button
-          key={l}
-          whileTap={tapScale}
-          onClick={() => onChange(l)}
-          className={`relative z-10 px-3 py-1.5 rounded-full transition-colors ${
-            value === l ? "text-primary-foreground" : "text-muted-foreground"
-          }`}
-        >
-          {value === l && (
-            <motion.span
-              layoutId="lang-pill"
-              className="absolute inset-0 rounded-full bg-primary"
-              transition={spring}
-            />
+    <div
+      className="inline-flex items-center gap-1.5 text-[11px] font-medium tracking-[0.12em]"
+      role="group"
+      aria-label="Language"
+    >
+      {(["en", "am"] as const).map((l, i) => (
+        <span key={l} className="inline-flex items-center gap-1.5">
+          {i > 0 && (
+            <span className="text-border" aria-hidden>
+              /
+            </span>
           )}
-          <span className="relative">{l.toUpperCase()}</span>
-        </motion.button>
+          <button
+            type="button"
+            onClick={() => onChange(l)}
+            className={`py-2 transition-colors ${
+              value === l ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+            aria-pressed={value === l}
+          >
+            <span className={value === l ? "border-b border-gold pb-0.5" : ""}>
+              {l.toUpperCase()}
+            </span>
+          </button>
+        </span>
       ))}
     </div>
   );
