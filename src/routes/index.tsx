@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { ArrowRight, ShieldCheck, Wrench, MapPin, Phone, MessageCircle } from "lucide-react";
+import { ShieldCheck, Wrench, MapPin, Phone, MessageCircle } from "lucide-react";
+import { Categories } from "@/components/site/Categories";
 import { Hero } from "@/components/site/Hero";
 import { ProductCard } from "@/components/site/ProductCard";
 import { useI18n } from "@/lib/i18n";
@@ -11,9 +12,6 @@ import type { GalleryImage, Product, SiteSettings } from "@/lib/types";
 import { revealTransition } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 import { telLink, waLink } from "@/lib/contact-links";
-import bikeImg from "@/assets/cat-bikes.jpg";
-import pumpImg from "@/assets/cat-pumps.jpg";
-import scaleImg from "@/assets/cat-scales.jpg";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -48,67 +46,6 @@ function Home() {
   );
 }
 
-function Categories() {
-  const { t } = useI18n();
-  const cats = [
-    { id: "bikes", img: bikeImg, title: t("cat.bikes"), desc: t("cat.desc.bikes") },
-    { id: "pumps", img: pumpImg, title: t("cat.pumps"), desc: t("cat.desc.pumps") },
-    { id: "scales", img: scaleImg, title: t("cat.scales"), desc: t("cat.desc.scales") },
-  ] as const;
-
-  return (
-    <section id="categories" className="container-x py-16 md:py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={revealTransition}
-      >
-        <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">{t("cats.sub")}</div>
-        <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">{t("cats.title")}</h2>
-      </motion.div>
-
-      <div className="mt-10 grid gap-5 md:grid-cols-3">
-        {cats.map((c, i) => (
-          <motion.div
-            key={c.id}
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ ...revealTransition, delay: i * 0.08 }}
-          >
-            <Link
-              to="/catalog"
-              search={{ cat: c.id }}
-              className="group relative block overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]"
-            >
-              <div className="aspect-[5/4] overflow-hidden bg-surface-muted">
-                <img
-                  src={c.img}
-                  alt={c.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-6">
-                <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                  0{i + 1}
-                </div>
-                <h3 className="mt-1 font-display text-lg font-bold text-card-foreground">{c.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{c.desc}</p>
-                <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-gold">
-                  {t("cat.browse")}
-                  <ArrowRight size={14} className="transition group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function Featured({ products }: { products: Product[] }) {
   const { t } = useI18n();
   return (
@@ -116,8 +53,12 @@ function Featured({ products }: { products: Product[] }) {
       <div className="container-x">
         <div className="mb-8 flex items-end justify-between gap-4">
           <div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">{t("home.featured.sub")}</div>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">{t("home.featured.title")}</h2>
+            <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
+              {t("home.featured.sub")}
+            </div>
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
+              {t("home.featured.title")}
+            </h2>
           </div>
           <Link
             to="/catalog"
@@ -144,8 +85,12 @@ function GalleryTeaser({ images }: { images: GalleryImage[] }) {
       <div className="container-x py-16 md:py-20">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">{t("home.gallery.sub")}</p>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">{t("home.gallery.title")}</h2>
+            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
+              {t("home.gallery.sub")}
+            </p>
+            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
+              {t("home.gallery.title")}
+            </h2>
           </div>
           <Link to="/gallery" className="text-sm font-semibold text-gold hover:underline">
             {t("home.gallery.more")} →
@@ -227,14 +172,20 @@ function Visit({ settings }: { settings: SiteSettings }) {
           viewport={{ once: true }}
           transition={revealTransition}
         >
-          <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">{t("home.visit.sub")}</div>
-          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">{t("home.visit.title")}</h2>
+          <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
+            {t("home.visit.sub")}
+          </div>
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
+            {t("home.visit.title")}
+          </h2>
           <p className="mt-4 max-w-md text-muted-foreground">{t("home.visit.body")}</p>
 
           <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6">
             {rows.map(([k, v]) => (
               <div key={k}>
-                <dt className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{k}</dt>
+                <dt className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  {k}
+                </dt>
                 <dd className="mt-1 text-sm font-semibold">{v}</dd>
               </div>
             ))}
