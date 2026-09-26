@@ -36,7 +36,6 @@ export function Header() {
           : "border-b border-transparent bg-background/70 backdrop-blur-sm"
       }`}
     >
-      {/* Thin gold reading-progress — restrained editorial accent */}
       <motion.div
         className="absolute bottom-0 left-0 right-0 h-px origin-left bg-gold"
         style={{ scaleX: scrollYProgress }}
@@ -47,11 +46,15 @@ export function Header() {
         transition={{ duration: 0.28, ease: EASE }}
         className="container-x flex items-center justify-between gap-6"
       >
-        <Link to="/" className="flex shrink-0 items-center py-1" onClick={() => setOpen(false)}>
-          <Logo size={scrolled ? 32 : 36} />
+        <Link
+          to="/"
+          className="flex shrink-0 items-center py-1 opacity-[0.82] transition-opacity hover:opacity-100"
+          onClick={() => setOpen(false)}
+        >
+          <Logo size={scrolled ? 26 : 30} />
         </Link>
 
-        <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-10 md:flex" aria-label="Primary">
           {links.map((l) => {
             const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
             return (
@@ -75,14 +78,7 @@ export function Header() {
           })}
         </nav>
 
-        <div className="flex items-center gap-4 sm:gap-5">
-          <Link
-            to="/contact"
-            className="hidden text-[13px] font-medium tracking-[0.04em] text-foreground transition-colors hover:text-gold md:inline-flex"
-          >
-            {t("nav.contact")}
-          </Link>
-
+        <div className="flex items-center gap-3 sm:gap-4">
           <LangToggle value={lang} onChange={setLang} />
 
           <motion.button

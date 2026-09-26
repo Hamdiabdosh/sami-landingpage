@@ -19,56 +19,63 @@ export function Hero() {
     reduced
       ? undefined
       : {
-          initial: { opacity: 0, y: 18 },
+          initial: { opacity: 0, y: 16 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.75, delay, ease },
+          transition: { duration: 0.7, delay, ease },
         };
 
   return (
     <section className="relative isolate bg-background text-foreground">
       <div className="grid min-h-[min(92vh,56rem)] lg:grid-cols-12">
-        {/* Copy column */}
-        <div className="relative z-10 flex flex-col justify-center px-5 py-14 sm:px-8 md:px-10 lg:col-span-5 lg:py-20 xl:px-14">
-          <div className="mx-auto w-full max-w-md lg:mx-0 lg:max-w-none">
+        {/* Copy — mobile: identity → message → support → action, then photo below */}
+        <div className="relative z-10 flex flex-col justify-center px-5 pb-10 pt-12 sm:px-8 sm:pb-12 sm:pt-14 md:px-10 lg:col-span-5 lg:py-24 xl:px-14">
+          <div className="mx-auto flex w-full max-w-sm flex-col lg:mx-0 lg:max-w-[28rem]">
             <motion.p
-              {...reveal(0.35)}
-              className="flex items-center gap-3 text-[12px] text-muted-foreground"
+              {...reveal(0.3)}
+              className="flex items-center gap-3 text-[11px] leading-none tracking-[0.08em] text-muted-foreground"
             >
-              <span className="inline-block h-px w-7 bg-gold" aria-hidden />
+              <span className="inline-block h-px w-6 bg-gold" aria-hidden />
               <span>{t("hero.tag")}</span>
             </motion.p>
 
-            <motion.div {...reveal(0.45)} className="mt-8">
-              <p className="font-display text-[clamp(2.75rem,6vw,4.5rem)] font-bold leading-[0.92] tracking-[-0.035em] text-primary">
+            {/* Brand = large identity; weight kept below the headline message */}
+            <motion.div {...reveal(0.4)} className="mt-8 lg:mt-9">
+              <p className="font-display text-[clamp(2.35rem,5.2vw,3.75rem)] font-semibold leading-[0.96] tracking-[-0.035em] text-primary">
                 <span className="block">SAMI</span>
                 <span className="block">GENERAL</span>
                 <span className="block">TRADING</span>
               </p>
             </motion.div>
 
+            {/* Single editorial detail: separates identity from message */}
+            <motion.div {...reveal(0.5)} className="mt-10 h-px w-10 bg-gold lg:mt-12" aria-hidden />
+
+            {/* Headline = primary communication */}
             <motion.h1
-              {...reveal(0.58)}
-              className="mt-10 max-w-[18ch] font-display text-[clamp(1.5rem,3.2vw,2.25rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground"
+              {...reveal(0.55)}
+              className="mt-8 max-w-[17ch] font-display text-[clamp(1.7rem,3.4vw,2.5rem)] font-bold leading-[1.14] tracking-[-0.022em] text-foreground lg:mt-9"
             >
               <span className="block">{line1}.</span>
-              {line2 && <span className="mt-1 block text-muted-foreground">{line2}.</span>}
+              {line2 && (
+                <span className="mt-1.5 block font-medium text-foreground/65">{line2}.</span>
+              )}
             </motion.h1>
 
             <motion.p
-              {...reveal(0.7)}
-              className="mt-6 max-w-[36ch] text-[15px] leading-relaxed text-muted-foreground"
+              {...reveal(0.65)}
+              className="mt-5 max-w-[34ch] text-[14px] leading-[1.65] text-muted-foreground sm:text-[15px]"
             >
               {t("hero.sub")}
             </motion.p>
 
-            <motion.div {...reveal(0.82)} className="mt-10">
+            <motion.div {...reveal(0.75)} className="mt-9 lg:mt-11">
               <Link
                 to="/catalog"
-                className="group inline-flex items-center gap-3 border-b border-primary pb-1 text-sm font-medium tracking-[0.04em] text-primary transition-colors hover:border-gold hover:text-foreground"
+                className="group inline-flex items-center gap-3 border-b border-primary pb-1 text-[13px] font-medium tracking-[0.06em] text-primary transition-colors hover:border-gold hover:text-foreground"
               >
                 {t("cta.catalog")}
                 <ArrowRight
-                  size={16}
+                  size={15}
                   strokeWidth={1.75}
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 />
@@ -77,26 +84,20 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Photographic plane */}
-        <div className="relative min-h-[52vh] overflow-hidden bg-primary lg:col-span-7 lg:min-h-full">
+        {/* Photography — substantial band on mobile; dominant plane on desktop */}
+        <div className="relative min-h-[58vh] overflow-hidden bg-primary sm:min-h-[62vh] lg:col-span-7 lg:min-h-full">
           <motion.div
             className="absolute inset-0"
-            initial={reduced ? false : { opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.15, ease }}
+            initial={reduced ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.05, ease }}
           >
             <img
               src={heroImg}
               alt="Bicycle — Sami General Trading"
-              className="h-full w-full object-cover object-[center_40%] sm:object-center"
+              className="h-full w-full object-cover object-[center_38%] lg:object-center"
             />
           </motion.div>
-
-          {/* Localized edge wash so copy column edge reads cleanly at the seam on large screens */}
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 hidden w-16 bg-gradient-to-r from-background/25 to-transparent lg:block"
-            aria-hidden
-          />
         </div>
       </div>
     </section>
