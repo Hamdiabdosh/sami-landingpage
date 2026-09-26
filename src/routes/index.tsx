@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import { ShieldCheck, Wrench, MapPin, Phone, MessageCircle } from "lucide-react";
 import { Categories } from "@/components/site/Categories";
 import { Featured } from "@/components/site/Featured";
+import { GalleryTeaser } from "@/components/site/GalleryTeaser";
 import { Hero } from "@/components/site/Hero";
 import { useI18n } from "@/lib/i18n";
 import { listProducts } from "@/fns/products";
 import { listGalleryImages } from "@/fns/gallery";
 import { getSettings } from "@/fns/settings";
-import type { GalleryImage, SiteSettings } from "@/lib/types";
+import type { SiteSettings } from "@/lib/types";
 import { revealTransition } from "@/lib/motion";
 import { buildSeoHead } from "@/lib/seo";
 import { telLink, waLink } from "@/lib/contact-links";
@@ -43,52 +44,6 @@ function Home() {
       <WhyUs />
       <Visit settings={settings} />
     </>
-  );
-}
-
-function GalleryTeaser({ images }: { images: GalleryImage[] }) {
-  const { t } = useI18n();
-  return (
-    <section className="border-y border-border bg-surface-muted/40">
-      <div className="container-x py-16 md:py-20">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
-              {t("home.gallery.sub")}
-            </p>
-            <h2 className="mt-2 font-display text-3xl font-bold tracking-tight md:text-4xl">
-              {t("home.gallery.title")}
-            </h2>
-          </div>
-          <Link to="/gallery" className="text-sm font-semibold text-gold hover:underline">
-            {t("home.gallery.more")} →
-          </Link>
-        </div>
-        <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          {images.map((img, i) => (
-            <motion.div
-              key={img.id}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ ...revealTransition, delay: i * 0.06 }}
-            >
-              <Link
-                to="/gallery"
-                className="group block aspect-square overflow-hidden rounded-xl border border-border bg-surface-muted"
-              >
-                <img
-                  src={img.src}
-                  alt={img.captionEn || ""}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
